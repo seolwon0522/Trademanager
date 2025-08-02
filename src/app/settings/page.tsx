@@ -12,7 +12,8 @@ export default function SettingsPage() {
   const [nickname, setNickname] = useState('');
   const [twoFactor, setTwoFactor] = useState(false);
   const [lossAlert, setLossAlert] = useState(false);
-  const [quickInput, setQuickInput] = useState(false);
+  const [binanceApiKey, setBinanceApiKey] = useState('');
+  const [binanceSecretKey, setBinanceSecretKey] = useState('');
 
   const handleProfileSave = (e: FormEvent) => {
     e.preventDefault();
@@ -29,6 +30,10 @@ export default function SettingsPage() {
 
   const handleImportData = () => {
     console.log('import data');
+  };
+
+  const handleBinanceApiSave = () => {
+    console.log('바이낸스 API 키 저장', { binanceApiKey, binanceSecretKey });
   };
 
   return (
@@ -128,23 +133,43 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        {/* 단축키/빠른 입력 */}
+        {/* 바이낸스 API 키 설정 */}
         <section className="rounded-lg border bg-card text-card-foreground shadow-sm">
           <div className="p-6 border-b">
             <h2 className="text-xl font-semibold flex items-center gap-2">
-              <Keyboard className="h-5 w-5" /> 입력 및 단축키
+              <Keyboard className="h-5 w-5" /> 바이낸스 API 키
             </h2>
-            <p className="text-muted-foreground mt-1">빠른 입력 모드와 단축키를 설정합니다.</p>
+            <p className="text-muted-foreground mt-1">
+              바이낸스 API 키를 입력하여 거래내역을 조회합니다.
+            </p>
           </div>
 
-          <div className="p-6 flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="quick-input">빠른 입력 모드</Label>
-              <p className="text-sm text-muted-foreground">
-                양식 자동 포커스 등 빠른 기록을 위해 사용합니다.
-              </p>
+          <div className="p-6 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="binance-api-key">API 키</Label>
+              <Input
+                id="binance-api-key"
+                type="password"
+                value={binanceApiKey}
+                onChange={(e) => setBinanceApiKey(e.target.value)}
+                placeholder="바이낸스 API 키를 입력하세요"
+              />
             </div>
-            <Switch id="quick-input" checked={quickInput} onCheckedChange={setQuickInput} />
+
+            <div className="space-y-2">
+              <Label htmlFor="binance-secret-key">시크릿 키</Label>
+              <Input
+                id="binance-secret-key"
+                type="password"
+                value={binanceSecretKey}
+                onChange={(e) => setBinanceSecretKey(e.target.value)}
+                placeholder="바이낸스 시크릿 키를 입력하세요"
+              />
+            </div>
+
+            <Button onClick={handleBinanceApiSave} className="mt-4">
+              API 키 저장
+            </Button>
           </div>
         </section>
       </div>
