@@ -78,7 +78,7 @@ function QuickActionCard({
 }) {
   return (
     <Link href={href}>
-      <div className="bg-card p-6 rounded-lg border hover:shadow-md transition-all hover:border-primary/50 group cursor-pointer">
+      <div className="bg-card p-6 rounded-lg border hover:shadow-md transition-all hover:border-primary/50 group cursor-pointer mb-4">
         <div className="flex items-start justify-between">
           <div className="space-y-2 flex-1">
             <div className="flex items-center gap-2">
@@ -126,7 +126,7 @@ function RecentTradesSummary() {
   const recentTrades = data?.trades.slice(0, 5) || [];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4.5">
       <h3 className="font-semibold">최근 거래내역</h3>
       <div className="bg-card p-6 rounded-lg border">
         <div className="flex items-center justify-between mb-4">
@@ -150,11 +150,11 @@ function RecentTradesSummary() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {recentTrades.map((trade) => (
             <div
               key={trade.id}
-              className="flex items-center justify-between py-2 border-b last:border-0"
+              className="flex items-center justify-between py-3 border-b last:border-0"
             >
               <div className="flex items-center gap-3">
                 <div
@@ -263,30 +263,32 @@ export default function Dashboard() {
           </div>
 
           {/* 빠른 액션 (1/3) */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">빠른 액션</h3>
+          <div>
+            <h3 className="font-semibold mb-4">빠른 액션</h3>
 
-            <QuickActionCard
-              title="새 거래 기록"
-              description="매수/매도 기록을 추가하세요"
-              href="/trades"
-              icon={Plus}
-            />
+            <div className="space-y-6">
+              <QuickActionCard
+                title="새 거래 기록"
+                description="매수/매도 기록을 추가하세요"
+                href="/trades"
+                icon={Plus}
+              />
 
-            <QuickActionCard
-              title="거래 통계"
-              description="성과 분석 및 리포트 확인"
-              href="/statistics"
-              icon={BarChart3}
-              badge="NEW"
-            />
+              <QuickActionCard
+                title="거래 통계"
+                description="성과 분석 및 리포트 확인"
+                href="/statistics"
+                icon={BarChart3}
+                badge="NEW"
+              />
 
-            <QuickActionCard
-              title="월간 리포트"
-              description="상세한 매매 분석 보고서"
-              href="/reports"
-              icon={Calendar}
-            />
+              <QuickActionCard
+                title="월간 리포트"
+                description="상세한 매매 분석 보고서"
+                href="/reports"
+                icon={Calendar}
+              />
+            </div>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { User, Database, Bell, Keyboard } from 'lucide-react';
+import { User, Database, Keyboard, Bell } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,9 +11,15 @@ import { Switch } from '@/components/ui/switch';
 export default function SettingsPage() {
   const [nickname, setNickname] = useState('');
   const [twoFactor, setTwoFactor] = useState(false);
-  const [lossAlert, setLossAlert] = useState(false);
   const [binanceApiKey, setBinanceApiKey] = useState('');
   const [binanceSecretKey, setBinanceSecretKey] = useState('');
+
+  // 알림 설정 상태
+  const [lossAlert, setLossAlert] = useState(true);
+  const [consecutiveLossCount, setConsecutiveLossCount] = useState(3);
+  const [lossThreshold, setLossThreshold] = useState(5);
+  const [marketAlert, setMarketAlert] = useState(true);
+  const [tradeAlert, setTradeAlert] = useState(true);
 
   const handleProfileSave = (e: FormEvent) => {
     e.preventDefault();
@@ -34,6 +40,16 @@ export default function SettingsPage() {
 
   const handleBinanceApiSave = () => {
     console.log('바이낸스 API 키 저장', { binanceApiKey, binanceSecretKey });
+  };
+
+  const handleNotificationSave = () => {
+    console.log('알림 설정 저장', {
+      lossAlert,
+      consecutiveLossCount,
+      lossThreshold,
+      marketAlert,
+      tradeAlert,
+    });
   };
 
   return (
@@ -119,17 +135,84 @@ export default function SettingsPage() {
         <section className="rounded-lg border bg-card text-card-foreground shadow-sm">
           <div className="p-6 border-b">
             <h2 className="text-xl font-semibold flex items-center gap-2">
-              <Bell className="h-5 w-5" /> 알림
+              <Bell className="h-5 w-5" /> 알림 설정
             </h2>
             <p className="text-muted-foreground mt-1">거래 활동에 대한 알림을 설정합니다.</p>
           </div>
 
-          <div className="p-6 flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="loss-alert">연속 손실 알림</Label>
-              <p className="text-sm text-muted-foreground">연속 손실이 발생하면 경고를 받습니다.</p>
+          <div className="p-6 space-y-6">
+            {/* 연속 손실 알림 */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="loss-alert">연속 손실 알림</Label>
+                  <p className="text-sm text-muted-foreground">
+                    연속 손실이 발생하면 경고를 받습니다.
+                  </p>
+                </div>
+                <Switch id="loss-alert" checked={lossAlert} onCheckedChange={setLossAlert} />
+              </div>
+
+              {lossAlert && (
+                <div className="space-y-4 pl-4 border-l-2 border-muted">
+                  <div className="space-y-2">
+                    <Label htmlFor="consecutive-loss-count">연속 손실 기준</Label>
+                    <Input
+                      id="consecutive-loss-count"
+                      type="number"
+                      value={consecutiveLossCount}
+                      onChange={(e) => setConsecutiveLossCount(Number(e.target.value))}
+                      placeholder="3"
+                      min="1"
+                      max="10"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      일 연속 손실 시 알림을 받습니다.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="loss-threshold">손실 임계값</Label>
+                    <Input
+                      id="loss-threshold"
+                      type="number"
+                      value={lossThreshold}
+                      onChange={(e) => setLossThreshold(Number(e.target.value))}
+                      placeholder="5"
+                      min="1"
+                      max="20"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      % 이상 손실 시 긴급 알림을 받습니다.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-            <Switch id="loss-alert" checked={lossAlert} onCheckedChange={setLossAlert} />
+
+            {/* 시장 알림 */}
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="market-alert">시장 알림</Label>
+                <p className="text-sm text-muted-foreground">
+                  주요 코인 가격 변동 시 알림을 받습니다.
+                </p>
+              </div>
+              <Switch id="market-alert" checked={marketAlert} onCheckedChange={setMarketAlert} />
+            </div>
+
+            {/* 거래 완료 알림 */}
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="trade-alert">거래 완료 알림</Label>
+                <p className="text-sm text-muted-foreground">거래가 완료되면 알림을 받습니다.</p>
+              </div>
+              <Switch id="trade-alert" checked={tradeAlert} onCheckedChange={setTradeAlert} />
+            </div>
+
+            <Button onClick={handleNotificationSave} className="mt-4">
+              알림 설정 저장
+            </Button>
           </div>
         </section>
 
@@ -141,6 +224,10 @@ export default function SettingsPage() {
             </h2>
             <p className="text-muted-foreground mt-1">
               바이낸스 API 키를 입력하여 거래내역을 조회합니다.
+            </p>
+            <p className="text-sm text-blue-600 mt-2 bg-blue-50 p-3 rounded-md border border-blue-200">
+              🔒 <strong>보안 안내:</strong> 입력하신 API 키와 시크릿 키는 암호화되어 안전하게
+              저장되므로 걱정하지 마세요.
             </p>
           </div>
 
