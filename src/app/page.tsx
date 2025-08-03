@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useRecentTrades } from '@/hooks/use-trades';
+import { BinanceCoinSelector } from '@/components/binance-coin-selector';
 
 // 간단한 통계 카드 컴포넌트
 function StatCard({
@@ -202,7 +203,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">대시보드</h1>
-              <p className="text-muted-foreground mt-2">매매 활동 요약과 빠른 액세스 메뉴입니다.</p>
+              <p className="text-muted-foreground mt-2">매매 활동 요약과 빠른 액션 메뉴입니다.</p>
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="gap-1">
@@ -253,6 +254,11 @@ export default function Dashboard() {
             icon={Calendar}
             trend="neutral"
           />
+        </div>
+
+        {/* 바이낸스 코인 가격 조회 */}
+        <div className="mb-6">
+          <BinanceCoinSelector />
         </div>
 
         {/* 메인 콘텐츠 그리드 */}

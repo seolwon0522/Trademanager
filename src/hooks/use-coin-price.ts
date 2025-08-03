@@ -1,5 +1,5 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { coinApi, CoinPriceData } from '@/lib/api/coin-api';
+import { useQuery } from '@tanstack/react-query';
+import { coinApi, binanceApi } from '@/lib/api/coin-api';
 
 // 쿼리 키 상수 정의
 export const QUERY_KEYS = {
@@ -7,20 +7,48 @@ export const QUERY_KEYS = {
   HISTORICAL_PRICE: 'historicalPrice',
 } as const;
 
-// 현재 비트코인 가격 정보를 가져오는 hook
-export function useCoinPrice(): UseQueryResult<CoinPriceData, Error> {
+// 기존 비트코인 가격 훅
+export function useCoinPrice() {
   return useQuery({
-    queryKey: [QUERY_KEYS.COIN_PRICE],
+    queryKey: ['coin-price'],
     queryFn: coinApi.getCurrentPrice,
-    staleTime: 30 * 1000, // 30초 - 가격 정보는 자주 업데이트되므로 짧게 설정
-    refetchInterval: 60 * 1000, // 1분마다 자동 갱신
-    retry: 3, // 실패 시 최대 3회 재시도
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 지수적 백오프
+    refetchInterval: 30000, // 30초마다 자동 새로고침
+  });
+}
+
+// 바이낸스 거래소 정보 (사용 가능한 코인 목록) 훅
+export function useBinanceExchangeInfo() {
+  return useQuery({
+    queryKey: ['binance-exchange-info'],
+    queryFn: binanceApi.getExchangeInfo,
+    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
+    gcTime: 10 * 60 * 1000, // 10분간 가비지 컬렉션 대기
+  });
+}
+
+// 특정 코인의 바이낸스 가격 정보 훅
+export function useBinanceTickerPrice(symbol: string) {
+  return useQuery({
+    queryKey: ['binance-ticker-price', symbol],
+    queryFn: () => binanceApi.getTickerPrice(symbol),
+    enabled: !!symbol, // symbol이 있을 때만 실행
+    refetchInterval: 10000, // 10초마다 자동 새로고침
+    staleTime: 5000, // 5초간 캐시 유지
+  });
+}
+
+// 모든 코인의 바이낸스 가격 정보 훅
+export function useAllBinanceTickerPrices() {
+  return useQuery({
+    queryKey: ['all-binance-ticker-prices'],
+    queryFn: binanceApi.getAllTickerPrices,
+    refetchInterval: 30000, // 30초마다 자동 새로고침
+    staleTime: 10000, // 10초간 캐시 유지
   });
 }
 
 // 과거 비트코인 가격 정보를 가져오는 hook
-export function useHistoricalCoinPrice(date: string): UseQueryResult<CoinPriceData, Error> {
+export function useHistoricalCoinPrice(date: string) {
   return useQuery({
     queryKey: [QUERY_KEYS.HISTORICAL_PRICE, date],
     queryFn: () => coinApi.getHistoricalPrice(date),
