@@ -1,3 +1,8 @@
+import ProfitRateChart from '@/components/statistics/profit-rate-chart';
+import TimeHeatmap from '@/components/statistics/time-heatmap';
+import WinRateRatioChart from '@/components/statistics/win-rate-ratio-chart';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
 export default function StatisticsPage() {
   return (
     <div className="min-h-full bg-background">
@@ -8,14 +13,33 @@ export default function StatisticsPage() {
         </div>
       </div>
 
-      <div className="p-6">
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-8 text-center">
-          <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300 mb-4">
-            NEW
-          </div>
-          <h3 className="text-lg font-semibold mb-2">새로운 통계 기능</h3>
-          <p className="text-muted-foreground">고급 통계 분석 기능이 추가되었습니다!</p>
-        </div>
+      <div className="p-6 grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>수익률</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ProfitRateChart />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>승률 / 손익비</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <WinRateRatioChart />
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>시간대별 히트맵</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TimeHeatmap />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
