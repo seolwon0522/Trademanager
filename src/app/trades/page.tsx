@@ -1,17 +1,42 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, BarChart3, TrendingUp } from 'lucide-react';
+import { Plus, BarChart3, TrendingUp, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { format, addMonths, subMonths } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 import { Button } from '@/components/ui/button';
 import { TradeForm } from '@/components/trades/trade-form';
 import { TradesTable } from '@/components/trades/trades-table';
+import { Calendar as CalendarIcon } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 export default function TradesPage() {
   const [showForm, setShowForm] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const router = useRouter();
 
   const handleFormSuccess = () => {
     setShowForm(false);
+  };
+
+  const handlePreviousMonth = () => {
+    setSelectedMonth((prev) => subMonths(prev, 1));
+  };
+
+  const handleNextMonth = () => {
+    setSelectedMonth((prev) => addMonths(prev, 1));
+  };
+
+  const handleGoToStatistics = () => {
+    router.push('/statistics');
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedMonth(date);
+    }
   };
 
   return (
@@ -30,14 +55,7 @@ export default function TradesPage() {
               </p>
             </div>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  // 통계 페이지로 이동 (향후 구현)
-                  console.log('통계 페이지로 이동');
-                }}
-              >
+              <Button variant="outline" size="sm" onClick={handleGoToStatistics}>
                 <BarChart3 className="h-4 w-4 mr-2" />
                 통계 보기
               </Button>
@@ -52,11 +70,60 @@ export default function TradesPage() {
 
       {/* 메인 콘텐츠 */}
       <div className="p-6 space-y-6">
+        {/* 월별 네비게이션 */}
+        <div className="flex items-center justify-between bg-card border rounded-lg p-4">
+          <div className="flex items-center gap-4">
+            <Button variant="outline" size="sm" onClick={handlePreviousMonth} className="gap-2">
+              <ChevronLeft className="h-4 w-4" />
+              이전달
+            </Button>
+            <div className="text-center">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="h-auto p-2 hover:bg-muted/50">
+                    <div className="text-center">
+                      <h2 className="text-xl font-semibold flex items-center justify-center gap-2">
+                        {format(selectedMonth, 'yyyy년 M월', { locale: ko })}
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        {format(selectedMonth, 'yyyy년 M월', { locale: ko })} 거래 내역
+                      </p>
+                    </div>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="center">
+                  <CalendarIcon
+                    mode="single"
+                    selected={selectedMonth}
+                    onSelect={handleDateSelect}
+                    initialFocus
+                    className="rounded-md border"
+                    locale={ko}
+                    captionLayout="dropdown"
+                    fromYear={2020}
+                    toYear={2030}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <Button variant="outline" size="sm" onClick={handleNextMonth} className="gap-2">
+              다음달
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setSelectedMonth(new Date())}>
+              이번달
+            </Button>
+          </div>
+        </div>
+
         {/* 입력 폼 (조건부 렌더링) */}
         {showForm && <TradeForm onSuccess={handleFormSuccess} />}
 
         {/* 거래 테이블 */}
-        <TradesTable />
+        <TradesTable selectedMonth={selectedMonth} />
 
         {/* 도움말 섹션 */}
         {!showForm && (

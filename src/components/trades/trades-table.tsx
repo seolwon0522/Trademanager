@@ -1,6 +1,6 @@
 'use client';
 
-import { format } from 'date-fns';
+import { format, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { TrendingUp, TrendingDown, Clock, CheckCircle, Loader2 } from 'lucide-react';
 
@@ -171,17 +171,46 @@ function ErrorState({ error }: { error: Error }) {
 }
 
 // 메인 테이블 컴포넌트
-export function TradesTable() {
+interface TradesTableProps {
+  selectedMonth?: Date;
+}
+
+export function TradesTable({ selectedMonth }: TradesTableProps) {
   const { data, isLoading, error } = useRecentTrades();
+
+  // 선택된 월의 거래만 필터링
+  const filteredTrades =
+    data?.trades.filter((trade) => {
+      if (!selectedMonth) return true;
+
+      const tradeDate = new Date(trade.entryTime);
+      const monthStart = startOfMonth(selectedMonth);
+      const monthEnd = endOfMonth(selectedMonth);
+
+      return isWithinInterval(tradeDate, { start: monthStart, end: monthEnd });
+    }) || [];
+
+  const totalPnL = filteredTrades.reduce((sum, trade) => sum + (trade.pnl || 0), 0);
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">최근 거래 기록</h3>
-          <p className="text-sm text-muted-foreground">최근 10건의 거래 내역을 확인하세요</p>
+          <h3 className="text-lg font-semibold">
+            {selectedMonth
+              ? `${format(selectedMonth, 'yyyy년 M월', { locale: ko })} 거래 기록`
+              : '최근 거래 기록'}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {selectedMonth
+              ? `${format(selectedMonth, 'yyyy년 M월', { locale: ko })} 거래 내역을 확인하세요`
+              : '최근 10건의 거래 내역을 확인하세요'}
+          </p>
         </div>
-        {data && <Badge variant="secondary">총 {data.total}건</Badge>}
+        <div className="flex items-center gap-2">
+          {selectedMonth && <Badge variant="outline">{filteredTrades.length}건</Badge>}
+          {data && <Badge variant="secondary">총 {data.total}건</Badge>}
+        </div>
       </div>
 
       <div className="rounded-md border">
@@ -202,31 +231,34 @@ export function TradesTable() {
           <TableBody>
             {isLoading && <LoadingState />}
             {error && <ErrorState error={error} />}
-            {data && data.trades.length === 0 && <EmptyState />}
-            {data && data.trades.map((trade) => <TradeRow key={trade.id} trade={trade} />)}
+            {data && filteredTrades.length === 0 && <EmptyState />}
+            {filteredTrades.map((trade) => (
+              <TradeRow key={trade.id} trade={trade} />
+            ))}
           </TableBody>
         </Table>
       </div>
 
-      {data && data.trades.length > 0 && (
+      {filteredTrades.length > 0 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div>최근 {data.trades.length}건 표시 중</div>
+          <div>
+            {selectedMonth
+              ? `${format(selectedMonth, 'yyyy년 M월', { locale: ko })} ${filteredTrades.length}건 표시 중`
+              : `최근 ${filteredTrades.length}건 표시 중`}
+          </div>
           <div>
             총 손익:{' '}
             <span
               className={cn(
                 'font-medium',
-                (() => {
-                  const totalPnL = data.trades.reduce((sum, trade) => sum + (trade.pnl || 0), 0);
-                  return totalPnL > 0
-                    ? 'text-green-600 dark:text-green-400'
-                    : totalPnL < 0
-                      ? 'text-red-600 dark:text-red-400'
-                      : 'text-muted-foreground';
-                })()
+                totalPnL > 0
+                  ? 'text-green-600 dark:text-green-400'
+                  : totalPnL < 0
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-muted-foreground'
               )}
             >
-              {formatPnL(data.trades.reduce((sum, trade) => sum + (trade.pnl || 0), 0))}
+              {formatPnL(totalPnL)}
             </span>
           </div>
         </div>
