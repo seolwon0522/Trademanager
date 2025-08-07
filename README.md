@@ -523,23 +523,3 @@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 ```
 
----
-
-## 📞 연락처 및 지원
-
-- **프로젝트 홈페이지**: https://cryptotrademanager.com
-- **GitHub**: https://github.com/yourusername/CryptoTradeManager
-- **Issues**: https://github.com/yourusername/CryptoTradeManager/issues
-- **Discussions**: https://github.com/yourusername/CryptoTradeManager/discussions
-- **이메일**: contact@cryptotrademanager.com
-
----
-
-## ⭐ 스타 히스토리
-
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/CryptoTradeManager&type=Date)](https://star-history.com/#yourusername/CryptoTradeManager&Date)
-
----
-
-**🎯 목표를 향해 함께 성장하는 암호화폐 트레이딩 플랫폼**  
-*CryptoTradeManager와 함께 더 나은 트레이딩을 시작하세요!*
