@@ -46,6 +46,20 @@ function TradeRow({ trade }: { trade: Trade }) {
   const hasPnL = trade.pnl !== undefined && trade.pnl !== 0;
   const isProfit = trade.pnl && trade.pnl > 0;
 
+  // 매매 유형에 따른 배지 색상 결정
+  const getTradingTypeBadge = (tradingType: string) => {
+    switch (tradingType) {
+      case 'breakout':
+        return <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">돌파매매</Badge>;
+      case 'trend':
+        return <Badge variant="default" className="bg-green-500 hover:bg-green-600">추세매매</Badge>;
+      case 'counter_trend':
+        return <Badge variant="default" className="bg-orange-500 hover:bg-orange-600">역추세매매</Badge>;
+      default:
+        return <Badge variant="outline">알 수 없음</Badge>;
+    }
+  };
+
   return (
     <TableRow className="hover:bg-muted/50">
       {/* 종목명 */}
@@ -57,6 +71,11 @@ function TradeRow({ trade }: { trade: Trade }) {
           {isBuy ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
           {isBuy ? '매수' : '매도'}
         </Badge>
+      </TableCell>
+
+      {/* 매매 유형 */}
+      <TableCell>
+        {getTradingTypeBadge(trade.tradingType)}
       </TableCell>
 
       {/* 수량 */}
@@ -127,7 +146,7 @@ function TradeRow({ trade }: { trade: Trade }) {
 function EmptyState() {
   return (
     <TableRow>
-      <TableCell colSpan={9} className="h-24 text-center">
+      <TableCell colSpan={10} className="h-24 text-center">
         <div className="flex flex-col items-center gap-2">
           <TrendingUp className="h-8 w-8 text-muted-foreground" />
           <div>
@@ -144,7 +163,7 @@ function EmptyState() {
 function LoadingState() {
   return (
     <TableRow>
-      <TableCell colSpan={9} className="h-24 text-center">
+      <TableCell colSpan={10} className="h-24 text-center">
         <div className="flex items-center justify-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin" />
           <span className="text-sm text-muted-foreground">거래 기록을 불러오는 중...</span>
@@ -158,7 +177,7 @@ function LoadingState() {
 function ErrorState({ error }: { error: Error }) {
   return (
     <TableRow>
-      <TableCell colSpan={9} className="h-24 text-center">
+      <TableCell colSpan={10} className="h-24 text-center">
         <div className="flex flex-col items-center gap-2">
           <div className="text-destructive">
             <p className="text-sm font-medium">데이터를 불러올 수 없습니다</p>
@@ -219,6 +238,7 @@ export function TradesTable({ selectedMonth }: TradesTableProps) {
             <TableRow>
               <TableHead>종목</TableHead>
               <TableHead>유형</TableHead>
+              <TableHead>매매유형</TableHead>
               <TableHead className="text-right">수량</TableHead>
               <TableHead className="text-right">진입가</TableHead>
               <TableHead className="text-right">청산가</TableHead>

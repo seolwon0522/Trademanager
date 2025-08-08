@@ -57,7 +57,6 @@ export function Sidebar() {
       title: '통계',
       href: '/statistics',
       icon: BarChart3,
-      badge: 'NEW',
     },
     {
       title: '컴포넌트 예제',

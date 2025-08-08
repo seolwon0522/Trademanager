@@ -3,6 +3,7 @@ export interface Trade {
   id: string;
   symbol: string; // 종목명
   type: 'buy' | 'sell'; // 매수/매도
+  tradingType: 'breakout' | 'trend' | 'counter_trend'; // 매매 유형
   quantity: number; // 수량
   entryPrice: number; // 진입가
   exitPrice?: number; // 청산가 (선택적)
@@ -19,6 +20,7 @@ export interface Trade {
 export interface CreateTradeRequest {
   symbol: string;
   type: 'buy' | 'sell';
+  tradingType: 'breakout' | 'trend' | 'counter_trend';
   quantity: number;
   entryPrice: number;
   exitPrice?: number;

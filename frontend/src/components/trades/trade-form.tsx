@@ -16,6 +16,13 @@ import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Form,
   FormControl,
   FormDescription,
@@ -24,6 +31,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { CoinAutocomplete } from '@/components/trades/coin-autocomplete';
 
 import { createTradeSchema, CreateTradeFormData } from '@/schemas/trade';
 import { useCreateTrade } from '@/hooks/use-trades';
@@ -44,6 +52,7 @@ export function TradeForm({ onSuccess }: TradeFormProps) {
     defaultValues: {
       symbol: '',
       type: 'buy',
+      tradingType: 'breakout', // 기본값을 돌파매매로 설정
       quantity: 0,
       entryPrice: 0,
       exitPrice: undefined,
@@ -95,7 +104,11 @@ export function TradeForm({ onSuccess }: TradeFormProps) {
               <FormItem>
                 <FormLabel>종목명</FormLabel>
                 <FormControl>
-                  <Input placeholder="예: BTC/USDT, ETH/USDT" {...field} />
+                  <CoinAutocomplete
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="코인명 또는 심볼로 검색..."
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -139,6 +152,31 @@ export function TradeForm({ onSuccess }: TradeFormProps) {
                     </Label>
                   </div>
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* 매매 유형 선택 */}
+          <FormField
+            control={form.control}
+            name="tradingType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>매매 유형</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="매매 유형을 선택하세요" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="breakout">돌파매매</SelectItem>
+                    <SelectItem value="trend">추세매매</SelectItem>
+                    <SelectItem value="counter_trend">역추세매매</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>사용한 매매 전략을 선택하세요</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

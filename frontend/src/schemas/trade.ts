@@ -8,6 +8,11 @@ export const createTradeSchema = z.object({
     message: '매수/매도를 선택해주세요',
   }),
 
+  // 매매 유형 추가 (돌파매매, 추세매매, 역추세매매)
+  tradingType: z.enum(['breakout', 'trend', 'counter_trend'], {
+    message: '매매 유형을 선택해주세요',
+  }),
+
   quantity: z
     .number({
       message: '올바른 숫자를 입력해주세요',
