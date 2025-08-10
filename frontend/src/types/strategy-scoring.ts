@@ -2,6 +2,10 @@
 
 export type TradingStrategy = 'breakout' | 'trend' | 'counter_trend';
 
+// 총 배점 설정 (전략 + 금기룰 = 100점)
+export const TOTAL_STRATEGY_POINTS = 60; // 전략 기준 총점
+export const TOTAL_FORBIDDEN_POINTS = 40; // 금기룰 준수 총점
+
 // 공통 인디케이터 입력값 타입
 export interface TradeIndicators {
   // 돌파매매용
@@ -33,16 +37,16 @@ export interface StrategyCriterionScore {
     | 'reversion_confirmation'
     | 'tight_rr';
   description: string;
-  weight: number; // 0~1
-  passed: boolean;
-  score: number; // 0 또는 100*weight
+  weight: number; // 0~1 (전략 총점 대비 가중치 비율)
+  ratio: number; // 0~1 (해당 기준 달성 비율)
+  score: number; // 기준 점수 (point 단위)
+  maxPoints: number; // 기준 최대 점수 (TOTAL_STRATEGY_POINTS * weight)
 }
 
 export interface StrategyScoreResult {
   strategy: TradingStrategy;
-  totalScore: number; // 0~100
+  totalScore: number; // 전략 파트 점수 (0~TOTAL_STRATEGY_POINTS)
   criteria: StrategyCriterionScore[];
-  // 금기룰 차감 점수는 외부에서 합산 후 totalScore에서 차감
 }
 
 // 각 전략별 가중치 매핑 (합계 = 1)

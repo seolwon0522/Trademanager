@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createTradeSchema } from '@/schemas/trade';
 import { Trade } from '@/types/trade';
-import { ForbiddenRulesChecker } from '@/lib/forbidden-rules-checker';
 import { z } from 'zod';
-import { computeStrategyScore } from '@/lib/strategy-scoring';
+import {
+  computeStrategyScore,
+  computeForbiddenPoints,
+  TOTAL_FORBIDDEN_POINTS,
+} from '@/lib/strategy-scoring';
+
+const BACKEND_BASE_URL = process.env.BACKEND_BASE_URL; // e.g. http://localhost:8000
 
 // 임시 메모리 저장소 (실제 프로젝트에서는 데이터베이스 사용)
 // eslint-disable-next-line prefer-const
@@ -58,12 +63,9 @@ let trades: Trade[] = [
 // 손익 계산 함수
 function calculatePnL(trade: Omit<Trade, 'pnl'>): number {
   if (!trade.exitPrice) return 0;
-
-  if (trade.type === 'buy') {
-    return (trade.exitPrice - trade.entryPrice) * trade.quantity;
-  } else {
-    return (trade.entryPrice - trade.exitPrice) * trade.quantity;
-  }
+  return trade.type === 'buy'
+    ? (trade.exitPrice - trade.entryPrice) * trade.quantity
+    : (trade.entryPrice - trade.exitPrice) * trade.quantity;
 }
 
 // GET /api/trades - 거래 목록 조회
@@ -72,33 +74,32 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
     const offset = parseInt(searchParams.get('offset') || '0');
+
+    // Backend proxy (preferred)
+    if (BACKEND_BASE_URL) {
+      const qs = searchParams.toString();
+      const url = `${BACKEND_BASE_URL.replace(/\/$/, '')}/trades${qs ? `?${qs}` : ''}`;
+      const resp = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+      const data = await resp.json();
+      return NextResponse.json(data, { status: resp.status });
+    }
+
+    // Fallback: local in-memory list
     const symbol = searchParams.get('symbol');
     const type = searchParams.get('type') as 'buy' | 'sell' | null;
     const status = searchParams.get('status') as 'open' | 'closed' | null;
 
-    // 필터링
     let filteredTrades = trades;
-
-    if (symbol) {
-      filteredTrades = filteredTrades.filter((trade) =>
-        trade.symbol.toLowerCase().includes(symbol.toLowerCase())
+    if (symbol)
+      filteredTrades = filteredTrades.filter((t) =>
+        t.symbol.toLowerCase().includes(symbol.toLowerCase())
       );
-    }
+    if (type) filteredTrades = filteredTrades.filter((t) => t.type === type);
+    if (status) filteredTrades = filteredTrades.filter((t) => t.status === status);
 
-    if (type) {
-      filteredTrades = filteredTrades.filter((trade) => trade.type === type);
-    }
-
-    if (status) {
-      filteredTrades = filteredTrades.filter((trade) => trade.status === status);
-    }
-
-    // 최신순 정렬
     filteredTrades.sort(
       (a, b) => new Date(b.entryTime).getTime() - new Date(a.entryTime).getTime()
     );
-
-    // 페이지네이션
     const paginatedTrades = filteredTrades.slice(offset, offset + limit);
 
     return NextResponse.json({
@@ -118,10 +119,22 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // 입력 검증
+    // 입력 검증 (프론트 API에서는 최소 검증만 수행)
     const validatedData = createTradeSchema.parse(body);
 
-    // 새 거래 생성
+    // Backend proxy (preferred)
+    if (BACKEND_BASE_URL) {
+      const url = `${BACKEND_BASE_URL.replace(/\/$/, '')}/trades`;
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(validatedData),
+      });
+      const data = await resp.json();
+      return NextResponse.json(data, { status: resp.status });
+    }
+
+    // Fallback: local compute + in-memory store
     const newTrade: Trade = {
       id: Date.now().toString(), // 실제로는 UUID 사용 권장
       symbol: validatedData.symbol,
@@ -140,49 +153,17 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date(),
     };
 
-    // 손익 계산
     newTrade.pnl = calculatePnL(newTrade);
 
-    // 금기룰 위반 체크
-    const forbiddenViolations = ForbiddenRulesChecker.checkTrade(
-      newTrade,
-      trades,
-      100000 // 가상의 계좌 자산 (100,000 USDT로 가정)
-    );
-
-    if (forbiddenViolations.length > 0) {
-      newTrade.forbiddenViolations = forbiddenViolations;
-
-      // 위반 내용을 로그로 출력 (개발 확인용)
-      console.log('⚠️ 금기룰 위반 감지:', {
-        trade_id: newTrade.id,
-        symbol: newTrade.symbol,
-        violations: forbiddenViolations.map((v) => ({
-          rule: v.rule_code,
-          description: v.description,
-          severity: v.severity,
-          penalty: v.score_penalty,
-        })),
-      });
-    }
-
-    // 전략 점수 계산 (indicators가 있을 경우)
     const strategyScore = computeStrategyScore(newTrade, validatedData.indicators);
-    if (strategyScore) {
-      newTrade.strategyScore = strategyScore;
-    }
+    if (strategyScore) newTrade.strategyScore = strategyScore;
 
-    // 금기룰 차감 점수
-    const penalty = newTrade.forbiddenViolations
-      ? ForbiddenRulesChecker.calculateTotalPenalty(newTrade.forbiddenViolations)
-      : 0;
-    newTrade.forbiddenPenalty = penalty;
+    const forbiddenPoints = computeForbiddenPoints(newTrade, trades, 100000);
+    newTrade.forbiddenPenalty = TOTAL_FORBIDDEN_POINTS - forbiddenPoints;
 
-    // 최종 점수 = (전략 점수 or 0) - 금기룰 차감, 0~100 클램프
-    const baseScore = newTrade.strategyScore?.totalScore ?? 0;
-    newTrade.finalScore = Math.max(0, Math.min(100, baseScore - penalty));
+    const base = strategyScore?.totalScore ?? 0;
+    newTrade.finalScore = base + forbiddenPoints;
 
-    // 메모리에 저장 (맨 앞에 추가)
     trades.unshift(newTrade);
 
     return NextResponse.json(newTrade, { status: 201 });

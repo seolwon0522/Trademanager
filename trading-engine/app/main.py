@@ -29,6 +29,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from routes_trades import router as trades_router  # noqa: E402
+from routes_patterns import router as patterns_router  # noqa: E402
+app.include_router(trades_router)
+app.include_router(patterns_router)
+
 @app.get("/")
 async def root():
     """루트 엔드포인트 - API 상태 확인"""
