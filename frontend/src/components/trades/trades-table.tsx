@@ -1,8 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import { format, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { TrendingUp, TrendingDown, Clock, CheckCircle, Loader2 } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  Clock,
+  CheckCircle,
+  Loader2,
+  AlertTriangle,
+  Shield,
+} from 'lucide-react';
 
 import {
   Table,
@@ -16,7 +25,9 @@ import { Badge } from '@/components/ui/badge';
 
 import { useRecentTrades } from '@/hooks/use-trades';
 import { Trade } from '@/types/trade';
+import { ForbiddenRuleViolation } from '@/types/forbidden-rules';
 import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 // 손익 포맷팅 함수
 function formatPnL(pnl: number | undefined): string {
@@ -39,8 +50,75 @@ function formatPrice(price: number): string {
   });
 }
 
+// 매매유형 한글 라벨 헬퍼
+function getTradingTypeLabel(tradingType: string): string {
+  // 매매 유형 id -> 한글 라벨 매핑
+  switch (tradingType) {
+    case 'breakout':
+      return '돌파매매';
+    case 'trend':
+      return '추세매매';
+    case 'counter_trend':
+      return '역추세매매';
+    default:
+      return '알 수 없음';
+  }
+}
+
+// 금기룰 위반 표시 컴포넌트
+function ForbiddenViolationsBadges({
+  violations,
+  orientation = 'horizontal',
+}: {
+  violations?: ForbiddenRuleViolation[];
+  orientation?: 'horizontal' | 'vertical';
+}) {
+  if (!violations || violations.length === 0) {
+    if (orientation === 'vertical') {
+      return (
+        <div className="flex flex-col items-center justify-center gap-1">
+          <Shield className="h-4 w-4 text-green-600" />
+          <span className="text-[11px] leading-none text-green-600">안전</span>
+        </div>
+      );
+    }
+    return (
+      <div className="inline-flex items-center gap-1">
+        <Shield className="h-3 w-3 text-green-600" />
+        <span className="text-xs text-green-600">안전</span>
+      </div>
+    );
+  }
+
+  const highSeverityCount = violations.filter((v) => v.severity === 'high').length;
+  const mediumSeverityCount = violations.filter((v) => v.severity === 'medium').length;
+  const totalPenalty = violations.reduce((sum, v) => sum + v.score_penalty, 0);
+
+  return (
+    <div className="inline-flex items-center gap-1">
+      <AlertTriangle className="h-3 w-3 text-red-600" />
+      <div className="inline-flex gap-1">
+        {highSeverityCount > 0 && (
+          <Badge variant="destructive" className="text-xs px-1 py-0 h-4">
+            위험 {highSeverityCount}
+          </Badge>
+        )}
+        {mediumSeverityCount > 0 && (
+          <Badge
+            variant="outline"
+            className="text-xs px-1 py-0 h-4 border-orange-300 text-orange-700"
+          >
+            경고 {mediumSeverityCount}
+          </Badge>
+        )}
+        <span className="text-xs text-red-600 font-medium">-{totalPenalty}점</span>
+      </div>
+    </div>
+  );
+}
+
 // 개별 거래 행 컴포넌트
-function TradeRow({ trade }: { trade: Trade }) {
+function TradeRow({ trade, onClick }: { trade: Trade; onClick: (t: Trade) => void }) {
   const isBuy = trade.type === 'buy';
   const isOpen = trade.status === 'open';
   const hasPnL = trade.pnl !== undefined && trade.pnl !== 0;
@@ -50,18 +128,30 @@ function TradeRow({ trade }: { trade: Trade }) {
   const getTradingTypeBadge = (tradingType: string) => {
     switch (tradingType) {
       case 'breakout':
-        return <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">돌파매매</Badge>;
+        return (
+          <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">
+            돌파매매
+          </Badge>
+        );
       case 'trend':
-        return <Badge variant="default" className="bg-green-500 hover:bg-green-600">추세매매</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-500 hover:bg-green-600">
+            추세매매
+          </Badge>
+        );
       case 'counter_trend':
-        return <Badge variant="default" className="bg-orange-500 hover:bg-orange-600">역추세매매</Badge>;
+        return (
+          <Badge variant="default" className="bg-orange-500 hover:bg-orange-600">
+            역추세매매
+          </Badge>
+        );
       default:
         return <Badge variant="outline">알 수 없음</Badge>;
     }
   };
 
   return (
-    <TableRow className="hover:bg-muted/50">
+    <TableRow className="hover:bg-muted/50 cursor-pointer" onClick={() => onClick(trade)}>
       {/* 종목명 */}
       <TableCell className="font-medium">{trade.symbol}</TableCell>
 
@@ -74,9 +164,7 @@ function TradeRow({ trade }: { trade: Trade }) {
       </TableCell>
 
       {/* 매매 유형 */}
-      <TableCell>
-        {getTradingTypeBadge(trade.tradingType)}
-      </TableCell>
+      <TableCell>{getTradingTypeBadge(trade.tradingType)}</TableCell>
 
       {/* 수량 */}
       <TableCell className="text-right">
@@ -138,64 +226,24 @@ function TradeRow({ trade }: { trade: Trade }) {
       <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
         {trade.memo || '-'}
       </TableCell>
-    </TableRow>
-  );
-}
 
-// 빈 상태 컴포넌트
-function EmptyState() {
-  return (
-    <TableRow>
-      <TableCell colSpan={10} className="h-24 text-center">
-        <div className="flex flex-col items-center gap-2">
-          <TrendingUp className="h-8 w-8 text-muted-foreground" />
-          <div>
-            <p className="text-sm font-medium">매매 기록이 없습니다</p>
-            <p className="text-xs text-muted-foreground">첫 번째 거래를 기록해보세요</p>
-          </div>
-        </div>
+      {/* 금기룰 위반 */}
+      <TableCell>
+        <ForbiddenViolationsBadges orientation="vertical" violations={trade.forbiddenViolations} />
       </TableCell>
     </TableRow>
   );
 }
 
-// 로딩 상태 컴포넌트
-function LoadingState() {
-  return (
-    <TableRow>
-      <TableCell colSpan={10} className="h-24 text-center">
-        <div className="flex items-center justify-center gap-2">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span className="text-sm text-muted-foreground">거래 기록을 불러오는 중...</span>
-        </div>
-      </TableCell>
-    </TableRow>
-  );
-}
+// 빈 상태, 로딩, 에러 컴포넌트는 동일
 
-// 에러 상태 컴포넌트
-function ErrorState({ error }: { error: Error }) {
-  return (
-    <TableRow>
-      <TableCell colSpan={10} className="h-24 text-center">
-        <div className="flex flex-col items-center gap-2">
-          <div className="text-destructive">
-            <p className="text-sm font-medium">데이터를 불러올 수 없습니다</p>
-            <p className="text-xs">{error.message}</p>
-          </div>
-        </div>
-      </TableCell>
-    </TableRow>
-  );
-}
-
-// 메인 테이블 컴포넌트
 interface TradesTableProps {
   selectedMonth?: Date;
 }
 
 export function TradesTable({ selectedMonth }: TradesTableProps) {
   const { data, isLoading, error } = useRecentTrades();
+  const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
 
   // 선택된 월의 거래만 필터링
   const filteredTrades =
@@ -246,14 +294,49 @@ export function TradesTable({ selectedMonth }: TradesTableProps) {
               <TableHead>상태</TableHead>
               <TableHead>진입시간</TableHead>
               <TableHead>메모</TableHead>
+              <TableHead>금기룰</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading && <LoadingState />}
-            {error && <ErrorState error={error} />}
-            {data && filteredTrades.length === 0 && <EmptyState />}
+            {isLoading && (
+              <TableRow>
+                <TableCell colSpan={11} className="h-24 text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm text-muted-foreground">
+                      거래 기록을 불러오는 중...
+                    </span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+            {error && (
+              <TableRow>
+                <TableCell colSpan={11} className="h-24 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="text-destructive">
+                      <p className="text-sm font-medium">데이터를 불러올 수 없습니다</p>
+                      <p className="text-xs">{(error as Error).message}</p>
+                    </div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+            {data && filteredTrades.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={11} className="h-24 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <TrendingUp className="h-8 w-8 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium">매매 기록이 없습니다</p>
+                      <p className="text-xs text-muted-foreground">첫 번째 거래를 기록해보세요</p>
+                    </div>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
             {filteredTrades.map((trade) => (
-              <TradeRow key={trade.id} trade={trade} />
+              <TradeRow key={trade.id} trade={trade} onClick={setSelectedTrade} />
             ))}
           </TableBody>
         </Table>
@@ -283,6 +366,120 @@ export function TradesTable({ selectedMonth }: TradesTableProps) {
           </div>
         </div>
       )}
+
+      {/* 상세 모달 */}
+      <Dialog open={!!selectedTrade} onOpenChange={(open) => !open && setSelectedTrade(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>거래 상세 정보</DialogTitle>
+          </DialogHeader>
+          {selectedTrade && (
+            <div className="space-y-3 text-sm">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-muted-foreground">종목</span>
+                  <div className="font-medium">{selectedTrade.symbol}</div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">유형</span>
+                  <div>
+                    <Badge
+                      variant={selectedTrade.type === 'buy' ? 'default' : 'destructive'}
+                      className="gap-1"
+                    >
+                      {selectedTrade.type === 'buy' ? '매수' : '매도'}
+                    </Badge>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">매매유형</span>
+                  <div className="font-medium">
+                    {getTradingTypeLabel(selectedTrade.tradingType)}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">수량</span>
+                  <div className="font-mono">{selectedTrade.quantity}</div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">진입가</span>
+                  <div className="font-mono">${formatPrice(selectedTrade.entryPrice)}</div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">청산가</span>
+                  <div className="font-mono">
+                    {selectedTrade.exitPrice ? `$${formatPrice(selectedTrade.exitPrice)}` : '-'}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">진입시간</span>
+                  <div>{format(selectedTrade.entryTime, 'yyyy-MM-dd HH:mm', { locale: ko })}</div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">청산시간</span>
+                  <div>
+                    {selectedTrade.exitTime
+                      ? format(selectedTrade.exitTime, 'yyyy-MM-dd HH:mm', { locale: ko })
+                      : '-'}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <span className="text-muted-foreground">메모</span>
+                  <div className="whitespace-pre-wrap">{selectedTrade.memo || '-'}</div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">금기룰</span>
+                  <div className="mt-1">
+                    <ForbiddenViolationsBadges
+                      orientation="horizontal"
+                      violations={selectedTrade.forbiddenViolations}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {selectedTrade.strategyScore && (
+                <div>
+                  <span className="text-muted-foreground">전략 점수</span>
+                  <div className="mt-1">
+                    <div className="font-medium">
+                      총점: {selectedTrade.strategyScore.totalScore}점
+                    </div>
+                    <div className="mt-2 space-y-1">
+                      {selectedTrade.strategyScore.criteria.map((c) => (
+                        <div key={c.code} className="flex items-center justify-between text-xs">
+                          <span>
+                            {c.description} ({Math.round(c.weight * 100)}%)
+                          </span>
+                          <span
+                            className={cn(
+                              'font-medium',
+                              c.passed ? 'text-green-600' : 'text-red-600'
+                            )}
+                          >
+                            {c.passed ? `+${Math.round(c.weight * 100)}` : '+0'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {selectedTrade.finalScore !== undefined && (
+                <div className="border-t pt-3">
+                  <div className="text-sm">
+                    최종 점수: <span className="font-semibold">{selectedTrade.finalScore}점</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

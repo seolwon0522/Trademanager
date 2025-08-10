@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createTradeSchema } from '@/schemas/trade';
 import { Trade } from '@/types/trade';
+import { ForbiddenRulesChecker } from '@/lib/forbidden-rules-checker';
 import { z } from 'zod';
+import { computeStrategyScore } from '@/lib/strategy-scoring';
 
 // 임시 메모리 저장소 (실제 프로젝트에서는 데이터베이스 사용)
 // eslint-disable-next-line prefer-const
@@ -131,6 +133,8 @@ export async function POST(request: NextRequest) {
       entryTime: new Date(validatedData.entryTime),
       exitTime: validatedData.exitTime ? new Date(validatedData.exitTime) : undefined,
       memo: validatedData.memo,
+      stopLoss: validatedData.stopLoss,
+      indicators: validatedData.indicators,
       status: validatedData.exitPrice ? 'closed' : 'open',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -138,6 +142,45 @@ export async function POST(request: NextRequest) {
 
     // 손익 계산
     newTrade.pnl = calculatePnL(newTrade);
+
+    // 금기룰 위반 체크
+    const forbiddenViolations = ForbiddenRulesChecker.checkTrade(
+      newTrade,
+      trades,
+      100000 // 가상의 계좌 자산 (100,000 USDT로 가정)
+    );
+
+    if (forbiddenViolations.length > 0) {
+      newTrade.forbiddenViolations = forbiddenViolations;
+
+      // 위반 내용을 로그로 출력 (개발 확인용)
+      console.log('⚠️ 금기룰 위반 감지:', {
+        trade_id: newTrade.id,
+        symbol: newTrade.symbol,
+        violations: forbiddenViolations.map((v) => ({
+          rule: v.rule_code,
+          description: v.description,
+          severity: v.severity,
+          penalty: v.score_penalty,
+        })),
+      });
+    }
+
+    // 전략 점수 계산 (indicators가 있을 경우)
+    const strategyScore = computeStrategyScore(newTrade, validatedData.indicators);
+    if (strategyScore) {
+      newTrade.strategyScore = strategyScore;
+    }
+
+    // 금기룰 차감 점수
+    const penalty = newTrade.forbiddenViolations
+      ? ForbiddenRulesChecker.calculateTotalPenalty(newTrade.forbiddenViolations)
+      : 0;
+    newTrade.forbiddenPenalty = penalty;
+
+    // 최종 점수 = (전략 점수 or 0) - 금기룰 차감, 0~100 클램프
+    const baseScore = newTrade.strategyScore?.totalScore ?? 0;
+    newTrade.finalScore = Math.max(0, Math.min(100, baseScore - penalty));
 
     // 메모리에 저장 (맨 앞에 추가)
     trades.unshift(newTrade);

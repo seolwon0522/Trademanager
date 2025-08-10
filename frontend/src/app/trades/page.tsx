@@ -55,11 +55,11 @@ export default function TradesPage() {
               </p>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handleGoToStatistics}>
-                <BarChart3 className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" onClick={handleGoToStatistics} className="gap-2">
+                <BarChart3 className="h-4 w-4" />
                 통계 보기
               </Button>
-              <Button onClick={() => setShowForm(!showForm)} className="gap-2">
+              <Button size="sm" onClick={() => setShowForm(!showForm)} className="gap-2">
                 <Plus className="h-4 w-4" />
                 {showForm ? '폼 닫기' : '새 기록 추가'}
               </Button>

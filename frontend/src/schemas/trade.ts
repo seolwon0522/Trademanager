@@ -38,6 +38,29 @@ export const createTradeSchema = z.object({
   exitTime: z.string().optional(),
 
   memo: z.string().max(500, '메모는 500자 이하로 입력해주세요').optional(),
+
+  stopLoss: z
+    .number({
+      message: '올바른 숫자를 입력해주세요',
+    })
+    .positive('손절가는 0보다 커야 합니다')
+    .optional(),
+
+  // 전략 채점 입력 인디케이터 (선택)
+  indicators: z
+    .object({
+      volume: z.number().optional(),
+      averageVolume: z.number().optional(),
+      prevRangeHigh: z.number().optional(),
+      stopLossWithinLimit: z.boolean().optional(),
+      htfTrend: z.enum(['up', 'down', 'sideways']).optional(),
+      pullbackOk: z.boolean().optional(),
+      trailStopCorrect: z.boolean().optional(),
+      zscore: z.number().optional(),
+      reversalSignal: z.boolean().optional(),
+      riskReward: z.number().optional(),
+    })
+    .optional(),
 });
 
 // 거래 필터링을 위한 스키마

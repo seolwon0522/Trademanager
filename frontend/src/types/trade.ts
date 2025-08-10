@@ -1,3 +1,6 @@
+import { ForbiddenRuleViolation } from './forbidden-rules';
+import { TradeIndicators, StrategyScoreResult } from './strategy-scoring';
+
 // 거래 관련 타입 정의
 export interface Trade {
   id: string;
@@ -12,6 +15,17 @@ export interface Trade {
   memo?: string; // 메모
   pnl?: number; // 손익 (계산됨)
   status: 'open' | 'closed'; // 거래 상태
+  stopLoss?: number; // 손절가
+
+  // 전략 채점 관련
+  indicators?: TradeIndicators; // 입력 인디케이터
+  strategyScore?: StrategyScoreResult; // 전략 점수 상세
+  forbiddenPenalty?: number; // 금기룰 총 차감 점수
+  finalScore?: number; // 최종 점수 (전략 점수 - 금기룰 차감)
+
+  // 금기룰
+  forbiddenViolations?: ForbiddenRuleViolation[]; // 금기룰 위반 기록
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +41,10 @@ export interface CreateTradeRequest {
   entryTime: string; // ISO string
   exitTime?: string; // ISO string
   memo?: string;
+  stopLoss?: number; // 손절가
+
+  // 전략 채점 입력 (선택)
+  indicators?: TradeIndicators;
 }
 
 // API 응답 타입

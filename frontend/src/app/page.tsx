@@ -11,6 +11,8 @@ import {
   ArrowRight,
   Target,
   Clock,
+  AlertTriangle,
+  Shield,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -195,6 +197,21 @@ export default function Dashboard() {
   const totalPnL = recentTrades.reduce((sum, trade) => sum + (trade.pnl || 0), 0);
   const openPositions = recentTrades.filter((trade) => trade.status === 'open').length;
 
+  // 금기룰 위반 통계 계산
+  const violatedTrades = recentTrades.filter(
+    (trade) => trade.forbiddenViolations && trade.forbiddenViolations.length > 0
+  );
+  const totalViolations = violatedTrades.reduce(
+    (sum, trade) => sum + (trade.forbiddenViolations?.length || 0),
+    0
+  );
+  const totalPenaltyScore = violatedTrades.reduce(
+    (sum, trade) =>
+      sum + (trade.forbiddenViolations?.reduce((penalty, v) => penalty + v.score_penalty, 0) || 0),
+    0
+  );
+  const riskScore = totalTrades > 0 ? Math.max(0, 100 - totalPenaltyScore / totalTrades) : 100;
+
   return (
     <div className="min-h-full bg-background">
       {/* 페이지 헤더 */}
@@ -218,7 +235,7 @@ export default function Dashboard() {
       {/* 메인 콘텐츠 */}
       <div className="p-6 space-y-6">
         {/* 통계 카드들 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           <StatCard
             title="총 거래 수"
             value={totalTrades.toString()}
@@ -253,6 +270,15 @@ export default function Dashboard() {
             description="월간 손익"
             icon={Calendar}
             trend="neutral"
+          />
+
+          <StatCard
+            title="위험 점수"
+            value={`${riskScore.toFixed(0)}점`}
+            description={`금기룰 위반 ${totalViolations}건`}
+            icon={riskScore >= 80 ? Shield : AlertTriangle}
+            trend={riskScore >= 80 ? 'up' : riskScore >= 60 ? 'neutral' : 'down'}
+            trendValue={totalViolations > 0 ? `-${totalPenaltyScore}점` : '안전'}
           />
         </div>
 

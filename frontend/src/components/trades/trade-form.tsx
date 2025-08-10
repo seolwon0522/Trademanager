@@ -225,29 +225,54 @@ export function TradeForm({ onSuccess }: TradeFormProps) {
             />
           </div>
 
-          {/* 청산가 */}
-          <FormField
-            control={form.control}
-            name="exitPrice"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>청산가 (선택사항)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="포지션이 청산된 경우 입력"
-                    value={field.value || ''}
-                    onChange={(e) =>
-                      field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)
-                    }
-                  />
-                </FormControl>
-                <FormDescription>포지션을 청산한 경우에만 입력하세요</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* 청산가와 손절가 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="exitPrice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>청산가 (선택사항)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="포지션이 청산된 경우 입력"
+                      value={field.value || ''}
+                      onChange={(e) =>
+                        field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>포지션을 청산한 경우에만 입력하세요</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="stopLoss"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>손절가 (권장)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="손절 가격 설정"
+                      value={field.value || ''}
+                      onChange={(e) =>
+                        field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)
+                      }
+                    />
+                  </FormControl>
+                  <FormDescription>위험 관리를 위해 손절가를 설정하세요</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           {/* 진입 시간과 청산 시간 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
