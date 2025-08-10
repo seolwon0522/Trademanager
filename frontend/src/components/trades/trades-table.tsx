@@ -228,7 +228,7 @@ function TradeRow({ trade, onClick }: { trade: Trade; onClick: (t: Trade) => voi
       </TableCell>
 
       {/* 금기룰 위반 */}
-      <TableCell>
+      <TableCell className="text-center">
         <ForbiddenViolationsBadges orientation="vertical" violations={trade.forbiddenViolations} />
       </TableCell>
     </TableRow>
@@ -294,7 +294,7 @@ export function TradesTable({ selectedMonth }: TradesTableProps) {
               <TableHead>상태</TableHead>
               <TableHead>진입시간</TableHead>
               <TableHead>메모</TableHead>
-              <TableHead>금기룰</TableHead>
+              <TableHead className="text-center whitespace-nowrap w-16">금기룰</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
