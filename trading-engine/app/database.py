@@ -1,5 +1,5 @@
 # 데이터베이스 연결 및 스키마 정의
-from sqlalchemy import create_engine, Column, BigInteger, UUID, Date, Text, DateTime, Integer, ForeignKey, ARRAY
+from sqlalchemy import create_engine, Column, BigInteger, UUID, Date, Text, DateTime, Integer, Float, ForeignKey, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.dialects.postgresql import JSONB
@@ -37,6 +37,31 @@ class PatternHistory(Base):
     actions = Column(ARRAY(Text), nullable=True)
     summary_id = Column(BigInteger, ForeignKey("patterns_summary_weekly.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class TradeModel(Base):
+    """거래 기록 테이블"""
+    __tablename__ = "trades"
+
+    id = Column(BigInteger, primary_key=True, index=True)
+    symbol = Column(Text, nullable=False)
+    type = Column(Text, nullable=False)
+    trading_type = Column(Text, nullable=False)
+    quantity = Column(Float, nullable=False)
+    entry_price = Column(Float, nullable=False)
+    exit_price = Column(Float, nullable=True)
+    entry_time = Column(DateTime, nullable=False)
+    exit_time = Column(DateTime, nullable=True)
+    memo = Column(Text, nullable=True)
+    pnl = Column(Float, nullable=True)
+    status = Column(Text, nullable=False)
+    stop_loss = Column(Float, nullable=True)
+    indicators = Column(JSONB, nullable=True)
+    strategy_score = Column(JSONB, nullable=True)
+    forbidden_penalty = Column(Integer, nullable=True)
+    final_score = Column(Integer, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 # 테이블 생성
 def create_tables():

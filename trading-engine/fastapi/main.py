@@ -7,6 +7,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 from typing import Dict, Any, List
 from datetime import datetime
 import numpy as np
@@ -56,6 +57,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# app 디렉토리의 라우터 포함 (거래 기록 및 패턴 분석)
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+from app.routes_trades import router as trades_router
+from app.routes_patterns import router as patterns_router
+from app.database import create_tables
+app.include_router(trades_router)
+app.include_router(patterns_router)
+
 # 전역 변수
 kafka_producer: AIOKafkaProducer = None
 kafka_consumer: AIOKafkaConsumer = None
@@ -70,7 +79,9 @@ mean_reversion_scorer = MeanReversionScorer()
 async def startup_event():
     """애플리케이션 시작 시 실행"""
     global kafka_producer, kafka_consumer
-    
+    # 데이터베이스 테이블 생성
+    create_tables()
+
     try:
         # Kafka 프로듀서 초기화
         kafka_producer = AIOKafkaProducer(
@@ -281,46 +292,42 @@ def _validate_trade_message(trade_data: Dict[str, Any]) -> bool:
     return True
 
 async def _get_candles_for_trade(trade_data: Dict[str, Any]) -> List[Candle]:
-    """
-    거래에 대한 캔들 데이터를 가져오는 함수
-    실제 구현에서는 거래소 API를 호출해야 함
-    """
+    """거래소 API에서 캔들 데이터를 조회한다."""
+    symbol = trade_data["pair"].replace("/", "")
+    url = "https://api.binance.com/api/v3/klines"
+    params = {"symbol": symbol, "interval": "5m", "limit": 100}
+
     try:
-        # 여기서는 예시 데이터를 반환
-        # 실제로는 거래소 API에서 최근 100개의 캔들 데이터를 가져와야 함
-        
-        symbol = trade_data["pair"]
-        current_price = trade_data["price"]
-        
-        # 예시 캔들 데이터 생성 (실제로는 API 호출)
-        candles = []
-        base_timestamp = int(datetime.now().timestamp() * 1000)
-        
-        for i in range(100):
-            # 간단한 예시 데이터 생성
-            timestamp = base_timestamp - (100 - i) * 5 * 60 * 1000  # 5분 간격
-            
-            # 가격 변동 시뮬레이션
-            price_change = (i - 50) * 0.001  # -5% ~ +5% 변동
-            price = current_price * (1 + price_change)
-            
-            candle = Candle(
-                timestamp=timestamp,
-                open=price * 0.999,
-                high=price * 1.002,
-                low=price * 0.998,
-                close=price,
-                volume=1000.0 + i * 10,
-                symbol=symbol,
-                timeframe=TimeframeEnum.FIVE_MINUTES
+        import httpx
+
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(url, params=params)
+            resp.raise_for_status()
+            data = resp.json()
+
+        candles: List[Candle] = []
+        for c in data:
+            candles.append(
+                Candle(
+                    timestamp=c[0],
+                    open=float(c[1]),
+                    high=float(c[2]),
+                    low=float(c[3]),
+                    close=float(c[4]),
+                    volume=float(c[5]),
+                    symbol=trade_data["pair"],
+                    timeframe=TimeframeEnum.FIVE_MINUTES,
+                )
             )
-            candles.append(candle)
-        
+
         return candles
-        
+
+    except httpx.HTTPError as e:
+        logger.error(f"캔들 데이터 HTTP 오류: {e}")
+        raise HTTPException(status_code=502, detail="캔들 데이터를 가져오지 못했습니다")
     except Exception as e:
-        logger.error(f"캔들 데이터 가져오기 오류: {e}")
-        return []
+        logger.error(f"캔들 데이터 파싱 오류: {e}")
+        raise HTTPException(status_code=500, detail="캔들 데이터 처리 중 오류가 발생했습니다")
 
 @app.get("/test")
 async def test_endpoint():
