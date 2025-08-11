@@ -14,6 +14,16 @@ cd fastapi
 python main.py
 ```
 
+### 2. 데이터베이스 설정
+
+`DATABASE_URL` 환경 변수를 통해 PostgreSQL 연결을 설정합니다. 기본값은 `postgresql://localhost:5432/trading_journal` 입니다. 서버 시작 시 필요한 테이블이 자동으로 생성됩니다.
+
+### 3. 테스트 실행
+
+```bash
+pytest fastapi/tests
+```
+
 ### 2. Swagger UI 접속
 
 서버가 실행되면 다음 주소로 접속하세요:
