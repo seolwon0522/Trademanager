@@ -1,0 +1,4 @@
+rootProject.name = 'CryptoTradeManager'
+include 'backend'
+include 'frontend'
+include 'trading-engine'
