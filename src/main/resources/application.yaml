@@ -1,0 +1,70 @@
+spring:
+  application:
+    name: trading-bot
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/trading_bot
+    username: postgres
+    password: 1q2w3e4r!
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# JWT 설정
+jwt:
+  secret: your-secret-key-here-make-it-long-enough-for-production-use-minimum-32-characters
+  access-token-validity-in-seconds: 1800
+  refresh-token-validity-in-seconds: 604800
+
+# OAuth2 설정
+oauth2:
+  google:
+    client-id: development-google-client-id
+  apple:
+    client-id: development-apple-client-id
+
+---
+# 개발 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/trading_bot_dev
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    com.example.trading_bot: DEBUG
+
+---
+# 운영 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:postgresql://prod-server:5432/trading_bot_prod
+
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+logging:
+  level:
+    com.example.trading_bot: INFO
