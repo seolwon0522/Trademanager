@@ -46,8 +46,10 @@ configure(project(':backend')) {
         implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
         implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
-        // Google OAuth2
-        implementation 'com.google.api-client:google-api-client:1.35.2'
+        // Google OAuth2 (commons-logging 제외)
+        implementation('com.google.api-client:google-api-client:1.35.2') {
+            exclude group: 'commons-logging', module: 'commons-logging'
+        }
 
         // PostgreSQL
         runtimeOnly 'org.postgresql:postgresql'
