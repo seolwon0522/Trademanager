@@ -69,3 +69,4 @@ services:
       - trading-network
     depends_on:
       - redis
+
