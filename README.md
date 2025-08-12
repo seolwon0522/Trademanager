@@ -1,269 +1,379 @@
-<<<<<<< HEAD
-# CryptoTradeManager
+# 🚀 코인 거래 저널 - 통합 모노레포
 
-> 🚀 **AI 기반 암호화폐 자동매매 및 분석 플랫폼**  
-> Binance API 연동을 통한 실시간 거래 분석, 성과 평가, 자동매매 통합 솔루션
+> **AI 기반 암호화폐 거래 분석 및 성과 관리 플랫폼**  
+> Next.js + Spring Boot + FastAPI로 구성된 풀스택 모노레포 시스템
 
-[![Java](https://img.shields.io/badge/Java-17-orange)](https://openjdk.org/projects/jdk/17/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.4-brightgreen)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/yourusername/CryptoTradeManager)
+[![Next.js](https://img.shields.io/badge/Next.js-15.4.5-black?logo=next.js)](https://nextjs.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.4-brightgreen?logo=spring)](https://spring.io/projects/spring-boot)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)](https://openjdk.org/)
+[![Python](https://img.shields.io/badge/Python-3.9+-yellow?logo=python)](https://www.python.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?logo=postgresql)](https://www.postgresql.org/)
 
 ---
 
 ## 📋 목차
 
 - [🎯 프로젝트 소개](#-프로젝트-소개)
-- [📊 현재 진척 상황](#-현재-진척-상황)
-- [✨ 구현된 기능](#-구현된-기능)
-- [🛠 기술 스택](#-기술-스택)
-- [🚀 설치 및 실행](#-설치-및-실행)
+- [🏗️ 시스템 아키텍처](#️-시스템-아키텍처)
+- [🛠️ 기술 스택](#️-기술-스택)
 - [📁 프로젝트 구조](#-프로젝트-구조)
+- [🚀 빠른 시작](#-빠른-시작)
 - [⚙️ 개발 환경 설정](#️-개발-환경-설정)
+- [🐳 Docker 실행](#-docker-실행)
 - [📖 API 문서](#-api-문서)
-- [🗺 개발 로드맵](#-개발-로드맵)
-- [🤝 기여하기](#-기여하기)
+- [✨ 주요 기능](#-주요-기능)
+- [🔧 개발 가이드](#-개발-가이드)
+- [📊 개발 현황](#-개발-현황)
 
 ---
 
 ## 🎯 프로젝트 소개
 
-**CryptoTradeManager**는 암호화폐 트레이더의 거래 분석 및 성과 관리를 위한 통합 플랫폼입니다.  
-Binance API 연동을 통해 실시간 거래 데이터를 수집하고, AI 기반 분석으로 매매 성과를 평가하며,  
-전략 기반 자동매매를 제공하여 24/7 거래 기회를 활용할 수 있도록 지원합니다.
+**코인 거래 저널**은 암호화폐 트레이더를 위한 종합적인 거래 분석 및 성과 관리 플랫폼입니다. 실시간 거래 데이터 분석, AI 기반 패턴 인사이트, 그리고 체계적인 성과 추적을 통해 트레이더의 의사결정을 지원합니다.
 
-### 🎯 비즈니스 목표
-- **주요 목표**: 암호화폐 트레이더의 거래 분석 및 성과 관리 효율성 향상
-- **부가 목표**: AI 기반 매매 피드백을 통한 트레이딩 스킬 개선 지원  
-- **확장 목표**: 자동매매를 통한 24/7 거래 기회 활용 및 체계적인 리스크 관리
+### 🎯 핵심 가치
 
----
-
-## 📊 현재 진척 상황
-
-### 🟢 완료된 기능 (Phase 1 - 기본 인프라)
-
-| 영역 | 상태 | 완성도 | 설명 |
-|------|------|--------|------|
-| **프로젝트 구조** | ✅ 완료 | 95% | Spring Boot 3.5.4 기반 멀티 모듈 구조 설정 |
-| **인증 시스템** | ✅ 완료 | 90% | JWT + OAuth2 기반 사용자 인증 구현 |
-| **데이터베이스** | ✅ 완료 | 85% | PostgreSQL 연동 및 기본 엔티티 설계 |
-| **보안 설정** | ✅ 완료 | 80% | Spring Security 설정 및 비밀번호 암호화 |
-| **API 문서화** | ✅ 완료 | 90% | Swagger UI 연동 및 기본 API 스펙 |
-
-### 🟡 진행 중인 작업
-
-| 영역 | 상태 | 예상 완료 | 설명 |
-|------|------|-----------|------|
-| **패키지 구조 정리** | 🔄 진행중 | 1주 | `com.example.trading_bot` → `com.cryptotrademanager` 마이그레이션 |
-| **Binance API 연동** | 🔄 진행중 | 2주 | REST API v3 기본 연동 구현 |
-| **사용자 관리 API** | 🔄 진행중 | 1주 | 회원가입, 로그인, 프로필 관리 API 완성 |
-
-### 🔴 계획된 기능 (향후 개발)
-
-| Phase | 기능 | 예상 기간 | 우선순위 |
-|-------|------|-----------|----------|
-| **Phase 2** | 거래 내역 관리 시스템 | 3주 | 높음 |
-| **Phase 3** | 실시간 대시보드 | 4주 | 높음 |
-| **Phase 4** | AI 분석 엔진 | 6주 | 중간 |
-| **Phase 5** | 자동매매 시스템 | 8주 | 중간 |
-| **Phase 6** | 프론트엔드 개발 | 10주 | 낮음 |
+- **📊 체계적인 거래 기록 관리**: 수동 거래 입력부터 자동 분석까지
+- **🤖 AI 기반 패턴 분석**: GPT-4를 활용한 주간 거래 패턴 분석
+- **📈 실시간 성과 추적**: 수익률, 승률, 시간대별 분석
+- **🔄 통합 워크플로우**: 하나의 플랫폼에서 모든 거래 관리
 
 ---
 
-## ✨ 구현된 기능
+## 🏗️ 시스템 아키텍처
 
-### 🔐 사용자 인증 시스템
-- **JWT 토큰 기반 인증**: Access Token (30분) + Refresh Token (7일)
-- **OAuth2 소셜 로그인**: Google, Apple 로그인 준비 완료
-- **비밀번호 암호화**: BCrypt 해싱 적용
-- **사용자 역할 관리**: USER, ADMIN 역할 구분
+```mermaid
+graph TB
+    subgraph "사용자 인터페이스"
+        UI[프론트엔드<br/>Next.js 15 + TypeScript]
+    end
+    
+    subgraph "비즈니스 로직"
+        API[메인 백엔드<br/>Spring Boot 3.5.4]
+        ENGINE[매매평가 엔진<br/>FastAPI + Python]
+    end
+    
+    subgraph "데이터 계층"
+        DB[(PostgreSQL<br/>메인 데이터베이스)]
+        REDIS[(Redis<br/>캐싱 & 세션)]
+    end
+    
+    subgraph "외부 서비스"
+        BINANCE[Binance API<br/>실시간 가격]
+        GPT[OpenAI GPT-4<br/>패턴 분석]
+    end
+    
+    UI --> API
+    UI --> ENGINE
+    API --> DB
+    ENGINE --> DB
+    API --> REDIS
+    ENGINE --> REDIS
+    ENGINE --> GPT
+    API --> BINANCE
+    
+    style UI fill:#e1f5fe
+    style API fill:#e8f5e8
+    style ENGINE fill:#fff3e0
+    style DB fill:#f3e5f5
+    style REDIS fill:#ffebee
+```
 
-### 🏗 기본 인프라
-- **Spring Boot 3.5.4**: 최신 버전 프레임워크 적용
-- **PostgreSQL 연동**: JPA/Hibernate 기반 데이터 관리
-- **예외 처리**: 글로벌 예외 핸들러 구현
-- **설정 관리**: 환경별(dev/prod) 설정 분리
+### 🔄 데이터 플로우
 
-### 📚 API 문서화
-- **Swagger UI**: 자동 API 문서 생성
-- **OpenAPI 3.0**: 표준 API 스펙 준수
+1. **프론트엔드 (포트: 3000)**: 사용자 인터페이스, 차트, 대시보드
+2. **메인 백엔드 (포트: 8080)**: 사용자 인증, 거래 CRUD, 비즈니스 로직
+3. **매매평가 엔진 (포트: 8000)**: 거래 스코어링, AI 분석, 패턴 인사이트
+4. **데이터베이스**: PostgreSQL (메인), Redis (캐싱)
 
 ---
 
-## 🛠 기술 스택
+## 🛠️ 기술 스택
 
-### 🏗 Backend (구현 완료)
-| 기술 | 버전 | 상태 | 용도 |
-|------|------|------|------|
-| **Java** | 17 | ✅ | 메인 프로그래밍 언어 |
-| **Spring Boot** | 3.5.4 | ✅ | 백엔드 프레임워크 |
-| **Spring Security** | 6.0+ | ✅ | 인증 및 보안 |
-| **Spring Data JPA** | - | ✅ | 데이터베이스 ORM |
-| **Lombok** | - | ✅ | 코드 간소화 |
-| **JWT** | 0.12.3 | ✅ | 토큰 기반 인증 |
+### 🌐 프론트엔드 (`frontend/`)
 
-### 🗄 Database (구현 완료)
-| 기술 | 버전 | 상태 | 용도 |
-|------|------|------|------|
-| **PostgreSQL** | 16 | ✅ | 메인 데이터베이스 |
+| 기술 | 버전 | 용도 |
+|------|------|------|
+| **Next.js** | 15.4.5 | React 풀스택 프레임워크 |
+| **TypeScript** | 5.0+ | 타입 안전성 |
+| **Tailwind CSS** | 4.0+ | 유틸리티 기반 CSS 프레임워크 |
+| **React Query** | 5.84.1 | 서버 상태 관리 |
+| **React Hook Form** | 7.62.0 | 폼 관리 및 검증 |
+| **Recharts** | 2.15.4 | 차트 및 데이터 시각화 |
+| **Zod** | 4.0.14 | 스키마 검증 |
+| **Next Themes** | 0.4.6 | 다크모드 지원 |
 
-### 🌐 Frontend (계획)
-| 기술 | 버전 | 상태 | 용도 |
-|------|------|------|------|
-| **React** | 18 | 📋 계획 | 프론트엔드 프레임워크 |
-| **TypeScript** | 4.9+ | 📋 계획 | 타입 안전성 |
-| **Material-UI** | v5 | 📋 계획 | UI 컴포넌트 라이브러리 |
+### 🏗️ 메인 백엔드 (`backend/`)
 
-### 🔌 External APIs (계획)
-- **Binance REST API v3**: 거래소 데이터 조회 및 주문 실행 (진행중)
-- **Binance WebSocket**: 실시간 가격 및 거래 데이터 (계획)
+| 기술 | 버전 | 용도 |
+|------|------|------|
+| **Java** | 17 | 메인 프로그래밍 언어 |
+| **Spring Boot** | 3.5.4 | 백엔드 프레임워크 |
+| **Spring Security** | 6.0+ | 인증 및 보안 |
+| **Spring Data JPA** | - | 데이터베이스 ORM |
+| **JWT** | 0.12.3 | 토큰 기반 인증 |
+| **PostgreSQL** | 15+ | 메인 데이터베이스 |
+| **Swagger/OpenAPI** | 2.3.0 | API 문서화 |
+| **Lombok** | - | 코드 간소화 |
 
----
+### 🐍 매매평가 엔진 (`trading-engine/`)
 
-## 🚀 설치 및 실행
+| 기술 | 버전 | 용도 |
+|------|------|------|
+| **Python** | 3.9+ | 분석 및 알고리즘 언어 |
+| **FastAPI** | 0.104.1 | 고성능 API 프레임워크 |
+| **SQLAlchemy** | 2.0.23 | Python ORM |
+| **Pandas** | 2.1.3 | 데이터 분석 |
+| **OpenAI** | 1.3.5 | GPT-4 기반 패턴 분석 |
+| **Pydantic** | 2.5.0 | 데이터 검증 |
 
-### 📋 사전 요구사항
+### 🗄️ 데이터베이스 & 인프라
 
-- **Java 17** 이상
-- **PostgreSQL** 16 이상
-- **Git**
-
-### 🔧 빠른 시작
-
-1. **프로젝트 클론**
-```bash
-git clone https://github.com/yourusername/CryptoTradeManager.git
-cd CryptoTradeManager
-```
-
-2. **데이터베이스 설정**
-```sql
--- PostgreSQL 데이터베이스 생성
-CREATE DATABASE trading_bot;
-CREATE USER trading_user WITH PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE trading_bot TO trading_user;
-```
-
-3. **환경 설정**
-```yaml
-# src/main/resources/application.yaml 수정
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/trading_bot
-    username: trading_user
-    password: your_password
-
-jwt:
-  secret: your-super-secret-jwt-key-minimum-256-bits-long
-```
-
-4. **애플리케이션 실행**
-```bash
-# 권한 부여 (Linux/macOS)
-chmod +x gradlew
-
-# 애플리케이션 빌드 및 실행
-./gradlew bootRun
-
-# Windows
-gradlew.bat bootRun
-```
-
-5. **접속 확인**
-```bash
-# 애플리케이션 상태 확인
-curl http://localhost:8080/actuator/health
-
-# Swagger API 문서 확인
-open http://localhost:8080/swagger-ui.html
-```
+| 기술 | 버전 | 용도 |
+|------|------|------|
+| **PostgreSQL** | 15+ | 메인 데이터베이스 |
+| **Redis** | 7.0+ | 캐싱 및 세션 스토어 |
+| **Docker** | - | 컨테이너화 |
+| **Nginx** | - | 리버스 프록시 |
 
 ---
 
 ## 📁 프로젝트 구조
 
-### 현재 구조 (수정 필요)
 ```
-src/main/java/com/example/trading_bot/
-├── TradingBotApplication.java      # 메인 애플리케이션 클래스
-├── auth/                          # 🟢 인증 및 권한 관리 (90% 완료)
-│   ├── config/                    # Spring Security 설정
-│   ├── controller/                # 인증 관련 API 컨트롤러
-│   ├── dto/                       # 요청/응답 DTO
-│   ├── entity/                    # User, Role 엔티티
-│   ├── jwt/                       # JWT 토큰 처리
-│   ├── repository/                # 사용자 데이터 리포지토리
-│   ├── security/                  # Spring Security 설정
-│   └── service/                   # 인증 비즈니스 로직
-├── common/                        # 🟢 공통 컴포넌트 (80% 완료)
-│   ├── dto/                       # 공통 응답 DTO
-│   ├── entity/                    # BaseTimeEntity
-│   └── exception/                 # 글로벌 예외 처리
-├── exchange/                      # 🔴 거래소 연동 (0% 완료)
-├── trading/                       # 🔴 거래 관리 (0% 완료)
-├── strategy/                      # 🔴 전략 관리 (0% 완료)
-├── bot/                          # 🔴 자동매매 봇 (0% 완료)
-├── analysis/                     # 🔴 AI 분석 (0% 완료)
-├── dashboard/                    # 🔴 대시보드 (0% 완료)
-└── notification/                 # 🔴 알림 시스템 (0% 완료)
+coin-trading-journal-monorepo/
+│
+├── 📁 frontend/                    # Next.js 프론트엔드
+│   ├── src/
+│   │   ├── app/                    # App Router 페이지
+│   │   │   ├── trades/             # 거래 관리 페이지
+│   │   │   ├── statistics/         # 통계 대시보드
+│   │   │   ├── reports/            # 리포트 페이지
+│   │   │   └── api/                # API Routes
+│   │   ├── components/             # 재사용 컴포넌트
+│   │   │   ├── trades/             # 거래 관련 컴포넌트
+│   │   │   ├── statistics/         # 차트 및 통계 컴포넌트
+│   │   │   ├── layout/             # 레이아웃 컴포넌트
+│   │   │   └── ui/                 # 기본 UI 컴포넌트
+│   │   ├── hooks/                  # 커스텀 훅
+│   │   ├── lib/                    # 유틸리티 함수
+│   │   └── types/                  # TypeScript 타입 정의
+│   ├── package.json
+│   └── Dockerfile
+│
+├── 📁 backend/                     # Spring Boot 메인 백엔드
+│   ├── src/main/java/com/example/trading_bot/
+│   │   ├── auth/                   # JWT + OAuth2 인증 시스템
+│   │   │   ├── config/             # Security 설정
+│   │   │   ├── controller/         # 인증 API
+│   │   │   ├── dto/                # 요청/응답 DTO
+│   │   │   ├── entity/             # 사용자/역할 엔티티
+│   │   │   ├── jwt/                # JWT 토큰 처리
+│   │   │   ├── repository/         # 데이터 접근 계층
+│   │   │   └── service/            # 비즈니스 로직
+│   │   ├── common/                 # 공통 컴포넌트
+│   │   │   ├── dto/                # 공통 응답 DTO
+│   │   │   ├── entity/             # 기본 엔티티
+│   │   │   └── exception/          # 글로벌 예외 처리
+│   │   ├── trading/                # 거래 관리 (개발 예정)
+│   │   ├── analysis/               # 분석 시스템 (개발 예정)
+│   │   └── TradingBotApplication.java
+│   ├── src/main/resources/
+│   │   └── application.yaml        # 설정 파일
+│   ├── build.gradle
+│   └── Dockerfile
+│
+├── 📁 trading-engine/              # Python 매매평가 엔진
+│   ├── app/
+│   │   ├── main.py                 # FastAPI 앱
+│   │   ├── database.py             # DB 연결 설정
+│   │   ├── schemas.py              # Pydantic 모델
+│   │   ├── scoring.py              # 거래 스코어링 로직
+│   │   ├── llm_analyzer.py         # GPT-4 패턴 분석
+│   │   ├── routes_trades.py        # 거래 관련 API
+│   │   ├── routes_patterns.py      # 패턴 분석 API
+│   │   └── requirements.txt
+│   └── Dockerfile
+│
+├── 📁 nginx/                       # Nginx 설정 (프로덕션)
+├── 📄 docker-compose.yml           # 프로덕션 컨테이너 설정
+├── 📄 docker-compose.dev.yml       # 개발 환경 설정
+├── 📄 package.json                 # 모노레포 루트 설정
+└── 📄 README.md                    # 이 파일
 ```
 
-### 목표 구조 (패키지 이름 변경 필요)
+---
+
+## 🚀 빠른 시작
+
+### 📋 사전 요구사항
+
+- **Node.js**: 18.0.0 이상
+- **Java**: 17 이상 (OpenJDK 권장)
+- **Python**: 3.9 이상
+- **PostgreSQL**: 15 이상
+- **Redis**: 7.0 이상 (선택사항)
+
+### ⚡ 1분 시작하기
+
+```bash
+# 1. 프로젝트 클론
+git clone <repository-url>
+cd coin-trading-journal-monorepo
+
+# 2. 모든 의존성 설치
+npm run install:all
+
+# 3. 데이터베이스 설정 (PostgreSQL 실행 후)
+psql -U postgres -c "CREATE DATABASE trading_journal;"
+
+# 4. 환경 변수 설정
+cp env.example .env.local
+
+# 5. 전체 시스템 실행
+npm run dev:all
 ```
-src/main/java/com/cryptotrademanager/
-└── (위와 동일한 구조)
-```
+
+### 🌐 접속 확인
+
+- **프론트엔드**: http://localhost:3000
+- **메인 백엔드**: http://localhost:8080 (Swagger: `/swagger-ui.html`)
+- **매매평가 엔진**: http://localhost:8000 (Docs: `/docs`)
 
 ---
 
 ## ⚙️ 개발 환경 설정
 
-### 🔧 IDE 설정 
+### 1️⃣ 데이터베이스 설정
 
-#### IntelliJ IDEA 권장 설정
+#### PostgreSQL 설치 및 설정
+
 ```bash
-# Lombok 플러그인 설치 필수
-# Settings > Build > Compiler > Annotation Processors > Enable annotation processing 체크
-
-# 패키지 구조 문제 해결
-# File > Project Structure > Modules에서 소스 폴더 확인
-```
-
-### 🗄 데이터베이스 설정
-
-#### PostgreSQL 설치
-```bash
-# macOS
+# macOS (Homebrew)
 brew install postgresql
 brew services start postgresql
-createdb trading_bot
 
-# Ubuntu
+# Ubuntu/Debian
 sudo apt-get install postgresql postgresql-contrib
 sudo service postgresql start
-sudo -u postgres createdb trading_bot
+
+# 데이터베이스 생성
+psql -U postgres
+CREATE DATABASE trading_journal ENCODING 'UTF8';
+CREATE USER trading_user WITH PASSWORD 'trading_password';
+GRANT ALL PRIVILEGES ON DATABASE trading_journal TO trading_user;
+\q
 ```
 
-### ⚙️ 환경 변수 설정
+#### Redis 설치 (선택사항)
 
-현재 `application.yaml`에 하드코딩된 설정을 환경 변수로 분리 필요:
+```bash
+# macOS
+brew install redis
+brew services start redis
 
-```env
-# .env 파일 예시 (향후 적용)
-DATABASE_URL=jdbc:postgresql://localhost:5432/trading_bot
-DATABASE_USERNAME=trading_user
-DATABASE_PASSWORD=your_password
+# Ubuntu/Debian
+sudo apt-get install redis-server
+sudo service redis-server start
+```
 
+### 2️⃣ 환경 변수 설정
+
+#### 전역 환경 변수 (.env.local)
+
+```bash
+# 데이터베이스
+DATABASE_URL=postgresql://trading_user:trading_password@localhost:5432/trading_journal
+REDIS_URL=redis://localhost:6379
+
+# API URLs
+NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_TRADING_ENGINE_URL=http://localhost:8000
+
+# JWT 비밀키
 JWT_SECRET=your-super-secret-jwt-key-minimum-256-bits-long
-JWT_ACCESS_TOKEN_VALIDITY=1800
-JWT_REFRESH_TOKEN_VALIDITY=604800
 
-GOOGLE_CLIENT_ID=your_google_client_id
-APPLE_CLIENT_ID=your_apple_client_id
+# OpenAI API (패턴 분석용)
+OPENAI_API_KEY=your-openai-api-key
 
-LOG_LEVEL=INFO
+# OAuth2 (선택사항)
+GOOGLE_CLIENT_ID=your-google-client-id
+APPLE_CLIENT_ID=your-apple-client-id
+```
+
+### 3️⃣ 개별 모듈 실행
+
+#### 프론트엔드 실행
+
+```bash
+cd frontend
+npm install
+npm run dev
+# 접속: http://localhost:3000
+```
+
+#### 메인 백엔드 실행
+
+```bash
+cd backend
+./gradlew bootRun
+# 접속: http://localhost:8080
+# Swagger: http://localhost:8080/swagger-ui.html
+```
+
+#### 매매평가 엔진 실행
+
+```bash
+cd trading-engine/app
+pip install -r requirements.txt
+export DATABASE_URL="postgresql://trading_user:trading_password@localhost:5432/trading_journal"
+export OPENAI_API_KEY="your-openai-api-key"
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# 접속: http://localhost:8000
+# API Docs: http://localhost:8000/docs
+```
+
+---
+
+## 🐳 Docker 실행
+
+### 🚀 전체 시스템 실행 (프로덕션)
+
+```bash
+# 전체 빌드 및 실행
+docker-compose up -d
+
+# 로그 확인
+docker-compose logs -f
+
+# 접속 확인
+curl http://localhost:3000  # 프론트엔드
+curl http://localhost:8080/actuator/health  # 백엔드
+curl http://localhost:8000/health  # 매매평가 엔진
+```
+
+### 🔧 개발 모드 실행
+
+```bash
+# 개발 환경 (핫 리로드 활성화)
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# 특정 서비스만 실행
+docker-compose up postgres redis  # 데이터베이스만
+```
+
+### 📊 서비스 상태 확인
+
+```bash
+# 모든 서비스 상태
+docker-compose ps
+
+# 개별 서비스 로그
+docker-compose logs frontend
+docker-compose logs backend
+docker-compose logs trading-engine
 ```
 
 ---
@@ -271,414 +381,78 @@ LOG_LEVEL=INFO
 ## 📖 API 문서
 
 ### 🌐 Swagger UI
-개발 서버 실행 후 다음 URL에서 API 문서를 확인할 수 있습니다:
 
-- **Local**: http://localhost:8080/swagger-ui.html
-- **API Docs JSON**: http://localhost:8080/v3/api-docs
+각 백엔드 서비스는 자동으로 생성되는 API 문서를 제공합니다:
 
-### 🔑 현재 구현된 API 엔드포인트
+- **메인 백엔드**: http://localhost:8080/swagger-ui.html
+- **매매평가 엔진**: http://localhost:8000/docs
 
-#### 인증 API (구현 완료)
+### 🔑 주요 API 엔드포인트
+
+#### 메인 백엔드 (Spring Boot) - 포트 8080
+
 ```http
-POST   /api/v1/auth/register     # 회원가입
-POST   /api/v1/auth/login        # 로그인  
-POST   /api/v1/auth/refresh      # 토큰 갱신
-POST   /api/v1/auth/logout       # 로그아웃
-GET    /api/v1/auth/oauth2/google # Google OAuth2 로그인
+# 인증 API
+POST   /api/v1/auth/register      # 회원가입
+POST   /api/v1/auth/login         # 로그인
+POST   /api/v1/auth/refresh       # 토큰 갱신
+POST   /api/v1/auth/logout        # 로그아웃
+GET    /api/v1/auth/oauth2/google # Google OAuth2
+
+# 사용자 관리 API (개발 예정)
+GET    /api/v1/users/profile      # 사용자 프로필
+PUT    /api/v1/users/profile      # 프로필 업데이트
+
+# 거래 관리 API (개발 예정)
+GET    /api/v1/trades             # 거래 목록
+POST   /api/v1/trades             # 거래 생성
+PUT    /api/v1/trades/{id}        # 거래 수정
+DELETE /api/v1/trades/{id}        # 거래 삭제
 ```
 
-#### 향후 구현 예정 API
+#### 매매평가 엔진 (FastAPI) - 포트 8000
+
 ```http
-# 거래 내역 API (Phase 2)
-GET    /api/v1/trades            # 거래 내역 조회
-POST   /api/v1/trades            # 수동 거래 등록
+# 시스템 API
+GET    /                          # 서버 상태
+GET    /health                    # 헬스 체크
 
-# 자동매매 봇 API (Phase 5)  
-GET    /api/v1/bots              # 봇 목록 조회
-POST   /api/v1/bots              # 봇 생성
+# 거래 스코어링 API
+POST   /trades                    # 거래 생성 (자동 스코어링)
+GET    /trades                    # 거래 목록
+GET    /trades/{trade_id}         # 거래 상세
+PUT    /trades/{trade_id}         # 거래 수정
+DELETE /trades/{trade_id}         # 거래 삭제
 
-# 전략 관리 API (Phase 4)
-GET    /api/v1/strategies        # 전략 목록
-POST   /api/v1/strategies        # 전략 생성
+# AI 패턴 분석 API
+POST   /patterns/weekly/analyze   # 주간 패턴 분석 (GPT-4)
+GET    /patterns/history          # 분석 히스토리
+GET    /patterns/{pattern_id}     # 패턴 상세
+
+# 통계 API
+GET    /analytics/summary         # 거래 요약 통계
+GET    /analytics/performance     # 성과 분석
+GET    /analytics/trends          # 트렌드 분석
 ```
 
----
+### 📝 API 사용 예시
 
-## 🗺 개발 로드맵
-
-### 📅 Phase 1: 기본 인프라 (완료 - Week 1-2)
-- [x] Spring Boot 프로젝트 초기 설정
-- [x] PostgreSQL 데이터베이스 연동
-- [x] JWT 기반 인증 시스템 구현
-- [x] Spring Security 설정
-- [x] Swagger API 문서화 설정
-- [ ] 패키지 구조 정리 (`com.example.trading_bot` → `com.cryptotrademanager`)
-
-### 📅 Phase 2: 거래소 연동 (진행중 - Week 3-5)
-- [ ] Binance REST API v3 기본 연동
-- [ ] API 키 관리 시스템 구현
-- [ ] 계정 정보 조회 기능
-- [ ] 거래 내역 수집 기능
-- [ ] 실시간 가격 정보 수집
-
-### 📅 Phase 3: 거래 관리 시스템 (계획 - Week 6-8)
-- [ ] 거래 내역 CRUD API
-- [ ] 손익 계산 로직
-- [ ] 거래 통계 분석
-- [ ] 태그 및 메모 기능
-- [ ] 필터링 및 검색 기능
-
-### 📅 Phase 4: 대시보드 백엔드 (계획 - Week 9-12)
-- [ ] 포트폴리오 현황 API
-- [ ] 실시간 성과 지표 API
-- [ ] 시장 정보 수집 및 제공
-- [ ] WebSocket 실시간 통신
-
-### 📅 Phase 5: AI 분석 시스템 (계획 - Week 13-18)
-- [ ] 거래 성과 점수화 알고리즘
-- [ ] AI 피드백 생성 엔진
-- [ ] 패턴 분석 시스템
-- [ ] 개인화된 조언 시스템
-
-### 📅 Phase 6: 자동매매 시스템 (계획 - Week 19-26)
-- [ ] 전략 관리 시스템
-- [ ] 백테스트 엔진
-- [ ] 자동매매 봇 엔진
-- [ ] 리스크 관리 시스템
-
-### 📅 Phase 7: 프론트엔드 개발 (계획 - Week 27-36)
-- [ ] React 프로젝트 설정
-- [ ] 사용자 인증 UI
-- [ ] 대시보드 UI
-- [ ] 거래 관리 UI
-- [ ] 봇 관리 UI
-
----
-
-## 🐛 알려진 이슈 및 기술 부채
-
-### 🔴 Critical Issues
-1. **패키지 구조 불일치**: `com.example.trading_bot` vs `com.cryptotrademanager`
-   - 영향: 프로젝트 문서와 실제 코드 구조 불일치
-   - 해결 계획: Week 3에 전체 패키지 리팩토링
-
-2. **하드코딩된 설정**: `application.yaml`에 민감 정보 노출
-   - 영향: 보안 리스크 및 환경별 배포 어려움
-   - 해결 계획: 환경 변수 및 외부 설정 파일로 분리
-
-### 🟡 Medium Issues
-1. **테스트 코드 부족**: 현재 테스트 커버리지 부족
-   - 영향: 코드 품질 및 안정성 저하
-   - 해결 계획: 각 Phase 개발 시 테스트 코드 병행 작성
-
-2. **API 응답 표준화 미흡**: 일관된 응답 형식 필요
-   - 영향: 프론트엔드 연동 시 복잡성 증가
-   - 해결 계획: `ApiResponse` 클래스 확장 및 표준화
-
-### 🟢 Low Priority Issues
-1. **Lombok 의존성**: 일부 IDE에서 설정 복잡
-   - 영향: 개발 환경 설정 복잡성
-   - 해결 계획: 문서화 개선 및 설정 가이드 제공
-
----
-
-## 🧪 테스트 실행
-
-### 현재 테스트 상태
-```bash
-# 기본 테스트 실행 (현재 Spring Boot 기본 테스트만 존재)
-./gradlew test
-
-# 테스트 리포트 확인
-open build/reports/tests/test/index.html
-```
-
-### 향후 테스트 계획
-- **Unit Tests**: 각 서비스 클래스별 단위 테스트
-- **Integration Tests**: API 엔드포인트 통합 테스트  
-- **Security Tests**: 인증 및 권한 테스트
-- **Performance Tests**: API 응답 시간 테스트
-
----
-
-## 🤝 기여하기
-
-CryptoTradeManager 프로젝트에 기여해주셔서 감사합니다! 
-
-### 📝 기여 가이드라인
-
-1. **이슈 확인**: [GitHub Issues](https://github.com/yourusername/CryptoTradeManager/issues)에서 기존 이슈 확인
-2. **Fork & Branch**: 프로젝트 Fork 후 feature 브랜치 생성
-3. **개발**: 코딩 컨벤션 준수하여 개발
-4. **테스트**: 단위 테스트 및 통합 테스트 작성
-5. **Pull Request**: 상세한 설명과 함께 PR 생성
-
-### 🔍 코딩 컨벤션
-
-#### Java 코딩 스타일
-```java
-// ✅ Good
-@Service
-@RequiredArgsConstructor
-@Slf4j
-public class TradingService {
-    
-    private final TradingRepository tradingRepository;
-    
-    @Transactional(readOnly = true)
-    public List<TradeDto> findTradesByUserId(String userId) {
-        return tradingRepository.findByUserId(userId)
-            .stream()
-            .map(this::convertToDto)
-            .collect(toList());
-    }
-}
-
-// ❌ Bad  
-public class tradingservice {
-    @Autowired TradingRepository repo;
-    public List<TradeDto> getTrades(String id){/*...*/}
-}
-```
-
-#### Commit 메시지 컨벤션
-```bash
-# 형식: type(scope): subject
-
-feat(auth): JWT 토큰 기반 인증 시스템 구현
-fix(trading): 수수료 계산 오류 수정
-docs(readme): API 문서 업데이트
-test(bot): 자동매매 봇 단위 테스트 추가
-refactor(strategy): 전략 실행 로직 리팩토링
-```
-
----
-
-## 📄 라이선스
-
-이 프로젝트는 **MIT License** 하에 배포됩니다.  
-자세한 내용은 [LICENSE](LICENSE) 파일을 참고해주세요.
-
----
-
-## 📞 문의 및 지원
-
-- **GitHub Issues**: [프로젝트 이슈 트래커](https://github.com/yourusername/CryptoTradeManager/issues)
-- **개발진 이메일**: dev@cryptotrademanager.com
-- **보안 이슈**: security@cryptotrademanager.com
-
----
-
-*마지막 업데이트: 2025년 8월 12일*
-=======
-# 코인 거래 저널 - 모노레포
-
-암호화폐 거래 기록을 관리하고 분석하는 풀스택 애플리케이션입니다.
-
-## 프로젝트 구조
-
-```
-coin_trading_journal/
-├── frontend/              # Next.js 프론트엔드
-│   ├── src/              # React 컴포넌트 및 페이지
-│   ├── public/           # 정적 파일
-│   └── package.json      # 프론트엔드 의존성
-├── backend/              # Spring Boot 메인 백엔드 (예정)
-│   ├── src/              # Java 소스 코드
-│   ├── build.gradle      # Gradle 설정
-│   └── README.md         # 백엔드 문서
-├── trading-engine/       # Python 매매평가 엔진 (예정)
-│   ├── app/              # FastAPI 애플리케이션
-│   ├── requirements.txt  # Python 의존성
-│   └── docker-compose.yml # 컨테이너 설정
-└── package.json          # 모노레포 루트 설정
-```
-
-## 기술 스택
-
-### 프론트엔드 (frontend/)
-
-- **Next.js 15** - React 프레임워크
-- **TypeScript** - 타입 안전성
-- **Tailwind CSS** - 스타일링
-- **React Query** - 서버 상태 관리
-- **React Hook Form** - 폼 관리
-- **Zod** - 스키마 검증
-- **Recharts** - 차트 라이브러리
-
-### 메인 백엔드 (backend/)
-
-- **Java** - 백엔드 언어
-- **Spring Boot** - 웹 프레임워크
-- **Spring Data JPA** - 데이터베이스 ORM
-- **PostgreSQL** - 메인 데이터베이스
-- **Gradle** - 빌드 도구
-
-### 매매평가 엔진 (trading-engine/)
-
-- **Python** - 분석 및 알고리즘
-- **FastAPI** - 고성능 API 프레임워크
-- **Pandas** - 데이터 분석
-- **Docker** - 컨테이너화
-
-## 개발 환경 설정
-
-### 필수 요구사항
-
-- Node.js 18.0.0 이상
-- Java 17 이상
-- Python 3.9 이상
-- Docker (선택사항)
-
-### 전체 설치 및 실행
-
-1. **모든 의존성 설치**
-
-   ```bash
-   npm install
-   ```
-
-2. **프론트엔드 개발 서버 실행**
-
-   ```bash
-   npm run dev:frontend
-   ```
-
-3. **백엔드 서버 실행** (예정)
-
-   ```bash
-   npm run dev:backend
-   ```
-
-4. **매매평가 엔진 실행** (예정)
-   ```bash
-   npm run dev:trading
-   ```
-
-## 사용 가능한 스크립트
-
-### 프론트엔드
-
-- `npm run dev` - 프론트엔드 개발 서버 실행
-- `npm run build` - 프론트엔드 프로덕션 빌드
-- `npm run lint` - 프론트엔드 코드 린팅
-
-### 통합 스크립트
-
-- `npm run dev:all` - 모든 서비스 동시 실행
-- `npm run build:all` - 모든 서비스 빌드
-- `npm run docker:up` - Docker로 전체 스택 실행
-- `npm run docker:down` - Docker 스택 종료
-
-### Docker 명령어
-
-- `docker-compose up -d` - 프로덕션 모드로 실행
-- `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up` - 개발 모드로 실행
-
-## 마이그레이션 현황
-
-1. ✅ **1단계**: 프론트엔드를 frontend/ 폴더로 이동 완료
-2. ✅ **2단계**: Trademanager 백엔드를 backend/ 폴더로 통합 완료
-3. ✅ **3단계**: coin_trading Python 엔진을 trading-engine/ 폴더로 통합 완료
-4. ✅ **4단계**: 통합 개발환경 구성 (Docker Compose 등) 완료
-
-## 아키텍처
-
-```
-[ 프론트엔드 ]  ←→  [ 메인 백엔드 ]  ←→  [ 매매평가 엔진 ]
-   Next.js              Spring Boot          FastAPI
-   포트: 3000           포트: 8080           포트: 8000
-```
-
-## 실행 방법
-
-### 1. FastAPI 백엔드 (주간 패턴 분석)
-
-#### 사전 준비
+#### 거래 등록 및 스코어링
 
 ```bash
-# PostgreSQL 설치 및 데이터베이스 생성
-psql -U postgres -h localhost
-CREATE DATABASE trading_journal ENCODING 'UTF8' TEMPLATE template0;
-CREATE ROLE journal WITH LOGIN PASSWORD 'journal123';
-GRANT ALL PRIVILEGES ON DATABASE trading_journal TO journal;
-ALTER DATABASE trading_journal OWNER TO journal;
+curl -X POST "http://localhost:8000/trades" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "test-user",
+    "coin": "BTC",
+    "type": "BUY",
+    "quantity": 0.1,
+    "price": 45000,
+    "timestamp": "2024-01-15T10:30:00"
+  }'
 ```
 
-#### 환경 변수 설정
-
-```bash
-export DATABASE_URL="postgresql://journal:journal123@localhost:5432/trading_journal"
-export OPENAI_API_KEY="your_openai_api_key"  # GPT 패턴 분석용 (선택사항)
-```
-
-#### 서버 실행
-
-```bash
-cd trading-engine/app
-pip install fastapi "uvicorn[standard]" sqlalchemy psycopg2-binary openai pydantic python-dotenv
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-#### API 문서 (Swagger)
-
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-
-#### 주요 엔드포인트
-
-- `GET /`: 서버 상태 확인
-- `GET /health`: 헬스 체크
-- `POST /trades`: 거래 생성 (스코어링 포함)
-- `GET /trades`: 거래 목록 조회
-- `POST /patterns/weekly/analyze`: 주간 패턴 분석 (GPT-4o mini)
-- `GET /patterns/history`: 패턴 히스토리 조회
-
-### 2. Next.js 프론트엔드
-
-#### 환경 변수 설정
-
-```bash
-cd frontend
-echo "BACKEND_BASE_URL=http://localhost:8000" >> .env.local
-```
-
-#### 서버 실행
-
-```bash
-npm install
-npm run dev
-```
-
-#### 접속
-
-- **프론트엔드**: http://localhost:3000
-- **백엔드 연동**: 자동으로 FastAPI와 연결됨
-
-### 3. 전체 시스템 실행 순서
-
-1. **PostgreSQL 시작**: 데이터베이스 서버 실행
-2. **FastAPI 실행**:
-   ```bash
-   cd trading-engine/app
-   export DATABASE_URL="postgresql://journal:journal123@localhost:5432/trading_journal"
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
-   ```
-3. **프론트엔드 실행**:
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-
-### 4. 테스트
-
-#### FastAPI 테스트
-
-```bash
-curl http://localhost:8000/health
-```
-
-#### 주간 패턴 분석 테스트
+#### 주간 패턴 분석
 
 ```bash
 curl -X POST "http://localhost:8000/patterns/weekly/analyze" \
@@ -690,7 +464,216 @@ curl -X POST "http://localhost:8000/patterns/weekly/analyze" \
   }'
 ```
 
-## 라이센스
+---
 
-MIT
->>>>>>> ebc5b8464de0272e0199b620a25b940e4eb77f73
+## ✨ 주요 기능
+
+### 🎯 1. 거래 기록 관리
+
+- **📝 거래 등록**: 수동 거래 기록 입력
+- **📊 자동 스코어링**: AI 기반 거래 품질 평가
+- **🏷️ 태그 시스템**: 거래 분류 및 관리
+- **📝 메모 기능**: 거래 시 의사결정 기록
+
+### 📈 2. 실시간 대시보드
+
+- **💰 수익률 추적**: 일/주/월별 수익률 차트
+- **🎯 승률 분석**: 성공/실패 거래 비율
+- **⏰ 시간대별 분석**: 거래 시간 패턴 히트맵
+- **📊 코인별 성과**: 종목별 수익률 비교
+
+### 🤖 3. AI 패턴 분석
+
+- **🧠 GPT-4 분석**: 주간 거래 패턴 AI 인사이트
+- **📉 손실 패턴 탐지**: 반복되는 손실 패턴 식별
+- **💡 개선 제안**: 맞춤형 거래 전략 조언
+- **📈 성과 예측**: 과거 데이터 기반 성과 예측
+
+### 🔄 4. 통합 워크플로우
+
+- **🔐 안전한 인증**: JWT + OAuth2 기반 보안
+- **📱 반응형 UI**: 모바일/데스크톱 최적화
+- **🌙 다크모드**: 사용자 선호도 지원
+- **⚡ 실시간 업데이트**: WebSocket 기반 실시간 데이터
+
+---
+
+## 🔧 개발 가이드
+
+### 📝 코딩 컨벤션
+
+#### TypeScript/React
+
+```typescript
+// ✅ Good
+interface TradeFormProps {
+  onSubmit: (trade: Trade) => void;
+  initialValues?: Partial<Trade>;
+  isLoading?: boolean;
+}
+
+export const TradeForm: FC<TradeFormProps> = ({
+  onSubmit,
+  initialValues,
+  isLoading = false
+}) => {
+  // 컴포넌트 구현
+};
+```
+
+#### Java/Spring Boot
+
+```java
+// ✅ Good
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class TradingService {
+    
+    private final TradingRepository tradingRepository;
+    private final UserService userService;
+    
+    @Transactional(readOnly = true)
+    public List<TradeDto> findTradesByUserId(String userId) {
+        return tradingRepository.findByUserId(userId)
+            .stream()
+            .map(this::convertToDto)
+            .collect(toList());
+    }
+}
+```
+
+#### Python/FastAPI
+
+```python
+# ✅ Good
+@router.post("/trades", response_model=TradeResponse)
+async def create_trade(
+    trade: TradeCreate,
+    db: Session = Depends(get_db)
+) -> TradeResponse:
+    """거래 생성 및 자동 스코어링"""
+    try:
+        # 비즈니스 로직
+        scoring_result = await calculate_trade_score(trade)
+        db_trade = await create_trade_in_db(db, trade, scoring_result)
+        
+        return TradeResponse.from_orm(db_trade)
+    except Exception as e:
+        logger.error(f"거래 생성 실패: {e}")
+        raise HTTPException(status_code=500, detail="거래 생성에 실패했습니다")
+```
+
+### 🔄 Git 워크플로우
+
+```bash
+# 브랜치 명명 규칙
+feature/auth-oauth2-integration
+fix/trading-score-calculation
+hotfix/security-vulnerability
+
+# 커밋 메시지 규칙
+feat(auth): Google OAuth2 로그인 기능 추가
+fix(trading): 수수료 계산 오류 수정
+docs(readme): API 엔드포인트 문서 업데이트
+test(frontend): 거래 폼 컴포넌트 테스트 추가
+```
+
+### 🧪 테스트 실행
+
+```bash
+# 프론트엔드 테스트
+cd frontend
+npm run test              # Jest 단위 테스트
+npm run test:e2e          # Playwright E2E 테스트
+
+# 백엔드 테스트
+cd backend
+./gradlew test            # JUnit 테스트
+./gradlew integrationTest # 통합 테스트
+
+# 매매평가 엔진 테스트
+cd trading-engine/app
+pytest                    # Python 테스트
+pytest --cov=.           # 커버리지 리포트
+```
+
+---
+
+## 📊 개발 현황
+
+### ✅ 완료된 기능
+
+| 모듈 | 기능 | 상태 | 완성도 |
+|------|------|------|--------|
+| **Frontend** | Next.js 15 프로젝트 구조 | ✅ | 95% |
+| **Frontend** | 거래 기록 관리 UI | ✅ | 90% |
+| **Frontend** | 통계 대시보드 | ✅ | 85% |
+| **Frontend** | 실시간 차트 (TradingView) | ✅ | 80% |
+| **Frontend** | 다크모드 지원 | ✅ | 100% |
+| **Backend** | Spring Boot 3.5.4 설정 | ✅ | 95% |
+| **Backend** | JWT + OAuth2 인증 | ✅ | 90% |
+| **Backend** | PostgreSQL 연동 | ✅ | 85% |
+| **Backend** | Swagger API 문서 | ✅ | 90% |
+| **Trading Engine** | FastAPI 프로젝트 구조 | ✅ | 95% |
+| **Trading Engine** | 거래 스코어링 시스템 | ✅ | 85% |
+| **Trading Engine** | GPT-4 패턴 분석 | ✅ | 80% |
+| **Infrastructure** | Docker Compose 설정 | ✅ | 90% |
+| **Infrastructure** | 모노레포 구조 | ✅ | 95% |
+
+### 🚧 개발 중인 기능
+
+| 기능 | 예상 완료 | 담당자 | 우선순위 |
+|------|-----------|--------|----------|
+| 백엔드 거래 CRUD API | 1주 | Backend Team | 높음 |
+| 실시간 WebSocket 연동 | 2주 | Full Stack | 중간 |
+| Binance API 통합 | 3주 | Backend Team | 높음 |
+| 사용자 대시보드 완성 | 2주 | Frontend Team | 중간 |
+
+### 📅 로드맵
+
+#### Phase 1: 기본 기능 완성 (완료)
+- [x] 모노레포 구조 구축
+- [x] 기본 인증 시스템
+- [x] 프론트엔드 UI 컴포넌트
+- [x] 매매평가 엔진 기본 구조
+
+#### Phase 2: 백엔드 통합 (진행 중)
+- [ ] Spring Boot 거래 API 구현
+- [ ] 프론트엔드-백엔드 연동
+- [ ] 데이터베이스 스키마 최적화
+- [ ] API 성능 최적화
+
+#### Phase 3: 고급 기능 (계획)
+- [ ] 실시간 Binance API 연동
+- [ ] 자동 거래 기록 수집
+- [ ] 고급 분석 대시보드
+- [ ] 모바일 앱 개발
+
+---
+
+## 📞 문의 및 지원
+
+### 🐛 이슈 리포팅
+- **GitHub Issues**: 버그 리포트 및 기능 요청
+- **Security Issues**: 보안 관련 이슈는 별도 연락
+
+### 🤝 기여하기
+1. Fork 프로젝트
+2. Feature 브랜치 생성 (`git checkout -b feature/AmazingFeature`)
+3. 변경사항 커밋 (`git commit -m 'Add some AmazingFeature'`)
+4. 브랜치에 Push (`git push origin feature/AmazingFeature`)
+5. Pull Request 생성
+
+### 📄 라이선스
+이 프로젝트는 MIT 라이선스 하에 배포됩니다.
+
+---
+
+<div align="center">
+
+**🚀 Happy Trading! 📈**
+
+*마지막 업데이트: 2025년 8월 12일*
+
+</div>
