@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -18,18 +19,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource)
+            throws Exception {
+        return http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/swagger-ui.html").permitAll()
-                        .requestMatchers("/swagger-resources/**").permitAll()
-                        .requestMatchers("/webjars/**").permitAll()
-                        .anyRequest().permitAll()
-                );
-
-        return http.build();
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", 
+                                       "/swagger-resources/**", "/webjars/**").permitAll()
+                        .anyRequest().permitAll())
+                .build();
     }
 }
